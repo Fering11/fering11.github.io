@@ -37,7 +37,7 @@ document.ready(
 
         const default_theme = 'dark' // 'light'
 
-        function setTheme(status = 'light') {
+        function setTheme(status = 'dark') {
             if (status === 'dark') {
                 window.sessionStorage.theme = 'dark'
                 pagebody.classList.add('dark-theme');
