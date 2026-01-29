@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>[Newstar2025] Reverse3 花指令 | Welcome</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">[Newstar2025] Reverse3 花指令</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 24, 2025&nbsp;&nbsp;20:00:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>附件下载下来，并没有壳，直接拖入IDA，进行分析，F5一按，发现函数非常的短，被花指令干扰了，进入汇编查看</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842273863-4d6675a0-2252-4679-9127-f315abb81ee8.png"></p>
+<p>上面就是废话语句</p>
+<p>下面就是错误语句</p>
+<p>上面的nop掉，下面的就Uncode</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842329298-de6ef859-e1a6-46c6-a0d8-07479c725822.png"></p>
+<p>其实这里就能发现第一条mov语句的操作数并不是和下面一样，推测也是识别错误</p>
+<p>除开0E8h进行组合，就能恢复原样：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842416108-787401fc-bc0c-4e9b-9544-ab2f8df730af.png"></p>
+<p>在把0E8h nop掉就好</p>
+<p>反汇编就恢复正常了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">if ( Size == 40 )</span><br><span class="line">  &#123;</span><br><span class="line">    v5[0] = 0x673AF04AEFE18A5CLL;</span><br><span class="line">    v5[1] = 0xDCBAFF24A65D456LL;</span><br><span class="line">    v5[2] = 0xCFD8B1539076E546uLL;</span><br><span class="line">    v5[3] = 0xFD469B79EF8A33B7uLL;</span><br><span class="line">    v5[4] = 0x5985D24E20980BECLL;</span><br><span class="line">    v9 = (char *)KeyGen(v3);</span><br><span class="line">    v8 = strlen(v9);</span><br><span class="line">    rc4_init(v6, v9, v8);</span><br><span class="line">    memcpy(v7, Str, (int)Size);</span><br><span class="line">    rc4_crypt(v6, v7, Size);</span><br><span class="line">    for ( i = 0; i &lt; (int)Size; ++i )</span><br><span class="line">    &#123;</span><br><span class="line">      if ( v7[i] != *((_BYTE *)v5 + i) )</span><br><span class="line">      &#123;</span><br><span class="line">        printf(&amp;Format_);</span><br><span class="line">        free(Str);</span><br><span class="line">        return 0;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    printf(&amp;Format__0);</span><br><span class="line">    free(Str);</span><br><span class="line">    return 0;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+
+
+
+<p>查看代码逻辑可以知道，输入flag，进行rc4加密后与v5进行比较，那么反过来，v5就是flag加密后的数据。</p>
+<p>rc4是对称加密，因此可以自己把v5输入再取出flag</p>
+<p>现在来看KeyGen函数，猜测应该是生成的密码</p>
+<p>毫不意外这个函数也是花指令干扰了的：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842734868-774693d4-d7ad-429d-99b1-689afcab5f85.png"></p>
+<p>汇编代码的长度比较短</p>
+<p>主要的代码废话在这里：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842764428-19b18401-bf99-4c21-a173-a023e8a3b604.png"></p>
+<p>上面两句直接nop掉，下面取消编码，之后除开0e8h 再进行编码：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760842874096-b218f889-695d-4129-b1fa-7dd4fd0a9b75.png"></p>
+<p>这个48h其实是蛮奇怪的，但是观察可以看到，上下操作的都是rax,中间出现了一个eax,尝试将其合并：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760865328423-7a750de8-f2ce-4fa0-900e-698fe2337725.png"></p>
+<p>本质上就是返回这个字符串</p>
+<p>后面就是一个rc4_init 和 rc4_encrypt ，里面也是混淆，也可以直接去除</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760865406353-bda94e66-2e5a-4d08-a336-c029a2713be1.png"></p>
+<p>然后就得到了正常的代码：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760865440048-62fb9c36-26d8-4225-8d66-9b32b4ce1b25.png"></p>
+<p>这个和普通的rc4还是有所区别的，就是在S表的填充上。</p>
+<p>加密函数也是有所区别的，就是后面进行了加的操作（花指令去除比较简单就不写了）：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760865556976-1ae9ce2d-a1ac-4d3e-b652-97f6f860d403.png"></p>
+<p>这个就很坑爹啊，后面解密的时候要先把flag_encode进行一次自减操作，然后再来进入解密，然后再来一次自减操作</p>
+<p>我们先把函数原封不动拖入Vs进行编译尝试，发现实现的结果跟源程序是一样的</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760804178147-9f5901e5-2130-49a0-ad36-92f2cd635a66.png"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760804182748-ae2397e2-3480-44a3-b57a-f4b0b6c277cb.png"></p>
+<p>那么加密就很简单了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">int64_t key_stream[32] = &#123; NULL &#125;;</span><br><span class="line">BYTE crypt_result[40] = &#123;</span><br><span class="line">0x5C,0x8A,0xE1,0xEF,0x4A,0xF0,0x3A,0x67,0x56,0xD4,0x65,0x4A,0xF2,0xAF,0xCB,0x0D,</span><br><span class="line">0x46,0xE5,0x76,0x90,0x53,0xB1,0xD8,0xCF,0xB7,0x33,0x8A,0xEF,0x79,0x9B,0x46,0xFD,</span><br><span class="line">0xEC,0x0B,0x98,0x20,0x4E,0xD2,0x85,0x59</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">/*</span><br><span class="line">0000000518BFF7B0 5C 8A E1 EF 4A F0 3A 67 56 D4 65 4A F2 AF CB 0D \.áïJð:gVÔeJò¯Ë. </span><br><span class="line">0000000518BFF7C0 46 E5 76 90 53 B1 D8 CF B7 33 8A EF 79 9B 46 FD Fåv.S±ØÏ·3.ïy.Fý </span><br><span class="line">0000000518BFF7D0 EC 0B 98 20 4E D2 85 59 10 F9 BF 18 05 00 00 00 ì.. NÒ.Y.ù¿..... </span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">rc4_init((int64_t) key_stream, (int64_t)&quot;PickingUpFlowers&quot;, 16);</span><br><span class="line">for (size_t i = 0; i != 40; ++i) &#123;</span><br><span class="line">	crypt_result[i] -= i;</span><br><span class="line">&#125;</span><br><span class="line">crypt((int64_t)key_stream, (int64_t)crypt_result, 40);</span><br><span class="line">for (size_t i = 0; i != 40; ++i) &#123;</span><br><span class="line">	crypt_result[i] -= i;</span><br><span class="line">&#125;</span><br><span class="line">//flag&#123;WO0o0O0w_So0Oo0o_m4Ny_F1oO0o0oW3R5&#125;</span><br><span class="line">return 0;</span><br></pre></td></tr></table></figure>
+
+<p>解出flag</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/reverse/"># reverse</a>
+                    
+                        <a href="/tags/wp/"># wp</a>
+                    
+                        <a href="/tags/Newstar/"># Newstar</a>
+                    
+                        <a href="/tags/RC4%E5%8A%A0%E5%AF%86/"># RC4加密</a>
+                    
+                        <a href="/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"># 花指令</a>
+                    
+                        <a href="/tags/%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86/"># 代码混淆</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
+            
+            
+            <a class="next" rel="next" href="/CTF/168ee05721a0/">[强网杯2025] JustRe</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>[HDCTF2019] Maze WP | Welcome</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">[HDCTF2019] Maze WP</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 14, 2025&nbsp;&nbsp;15:00:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>首先下载下来，拖入exeinfo，发现是upx的壳，直接脱壳就好了。然后拖入IDA，我靠，什么都显示不出来，F5键一点也是用不了，发现是main函数下面IDA无法识别，奇怪，识别不了只能动调了。</p>
+<p>其实我是很怀疑是不是jnz指令存在混淆，导致IDA识别了错误的call指令，毕竟固定的地址也是错误的</p>
+<p>下面就是一大段字节码，没有被IDA识别的内容 (这个就是maze behind junk吗？)</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760438787698-b2bda5e3-1dce-4545-93f6-2450f572c0e8.png"></p>
+<p>我们从输出的字符串入手，设置断点，在x64dbg中查找(Shift + D ) 本模块”Go through …” 的字符串，并且定位到调用的位置</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439042183-488f7fc3-572d-4337-b703-6f69884ea351.png"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439085854-99691f8f-55ca-49f4-a51f-2d0f631ced10.png"></p>
+<p>这里很容易看出，push ebp 就是一个函数入口函数，毕竟这个是x86的程序，高亮的那一行就是参数入栈，那么自然下面一句就是printf之类的函数</p>
+<p>程序需要输入内容，那么自然可以联想到必定有类似scanf的函数调用，并且通过scanf的字符串可以观察到 “%14s” 就是接受14个字符串，下面可以假设为scanf</p>
+<p>然后接着往下，这个也是被识别为call指令，但实际上又不会发生跳转，我们接着往下执行</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439456524-408e7626-0092-4438-b8ea-3679b19e5391.png"></p>
+<p>高亮的那一行被许多分支指向，然后自己又回到了上面，可以判断是一个循环，然后我们再看下面就有了 “Congratulation”的字样，说明上面就是flag的判断，这道题是迷宫题，我们还是需要寻找到迷宫。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439512171-aa21ad2f-2e0a-419c-8aed-8f506bf1a3ed.png"></p>
+<p>这个只能一句一句分析，并且随便输入点东西来看。逻辑一定是会检测输入的内容，于是我们随便输入点东西，并且让程序执行到下面：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439722697-8534efb1-e34a-41ad-bf8c-727057088fc1.png"></p>
+<p>首先可以确定几个局部变量： [ebp-0x14]和 [ebp-0x18] 与 [ebp-0x10] ，</p>
+<p>一个一个在内存中查看：</p>
+<p>0x10: 这个很明显就是scanf 输入</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439827410-78229fa9-e102-4e31-96a7-65d0d6ee430f.png"></p>
+<p>0x14 暂时还无法判断</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760439938083-b9713be4-64ed-4ac8-b68d-867c0008b071.png"></p>
+<p>0x18 根据逻辑可以分析出来，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">00401048    | MOV EDX,DWORD PTR SS:[EBP-0x14]         |</span><br><span class="line">0040104B    | MOVSX EAX,BYTE PTR SS:[EBP+EDX-0x10]    |</span><br><span class="line">00401050    | MOV DWORD PTR SS:[EBP-0x18],EAX         |</span><br><span class="line">00401053    | MOV ECX,DWORD PTR SS:[EBP-0x18]         |</span><br><span class="line">00401056    | SUB ECX,0x61                            | 0x61 is &#x27;a&#x27;</span><br><span class="line">00401059    | MOV DWORD PTR SS:[EBP-0x18],ECX         |</span><br></pre></td></tr></table></figure>
+
+<p>取0x10+ edx的内容到eax，再写入到0x18中，然后再写入ecx,并且减去 0x61 (就是 a )，然后再写入0x18中</p>
+<blockquote>
+<p>这个就是纯纯脱裤子放屁</p>
+</blockquote>
+<p>根据这个，我们可以推断出edx 就是计数器，类似于for 循环中的i一样，并且在看下的：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440310424-8b858bfc-e243-4eb7-8285-fcc556f47eeb.png"></p>
+<p>0x14的值与13进行比较，大于跳出，大于恰好就是14个，也就是输入14个字母，这一段的逻辑就能说得通了</p>
+<p>不过这样其实还离我们的目标很远，只是分析出了程序的大概逻辑</p>
+<p>在x32dbg的图表中：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440569767-f1dee6cf-d525-4ea6-93af-3cb08810a2cb.png"></p>
+<p>我们很明显可以看到4个结构，并且我们能够发现两个神秘的地址:</p>
+<p>0x40807C和0x408078 </p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440641269-1d2fb63f-a2c8-4aae-93ab-a1c13e11121e.png"></p>
+<p>并且上面的4个结构做的事情就是对这两个地址的其中一个进行加减操作</p>
+<p>并且我们查看这里的内存时，就能发现：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440820432-dfcdeac3-0cd1-431b-85d6-ff499c809dc1.png"></p>
+<p>欸，这个不就是很像迷宫的结构，于是转到IDA进行分析：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440866764-8e5e6b62-06e8-4415-9916-577170820fbf.png"></p>
+<p>尝试构成一个合理的迷宫：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1760440887562-ce2f704c-3c6d-4ad6-82a0-c2ecfa7e7cfe.png"></p>
+<p>并且我们看下面的 db7,0 也知道这个就是+的位置</p>
+<p>那么一切都是简单的了，直接可以得到flag：</p>
+<p>ssaaasaassdddw</p>
+<p>结束</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/reverse/"># reverse</a>
+                    
+                        <a href="/tags/wp/"># wp</a>
+                    
+                        <a href="/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"># 花指令</a>
+                    
+                        <a href="/tags/HDCTF/"># HDCTF</a>
+                    
+                        <a href="/tags/%E8%BF%B7%E5%AE%AB%E9%A2%98/"># 迷宫题</a>
+                    
+                        <a href="/tags/UPX%E8%84%B1%E5%A3%B3/"># UPX脱壳</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/CTF/ee7f4c5b040f/">[Newstar2025] Reverse4 Dancing Keys</a>
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>N1CTF Junior 2026 WriteUp (1/2) | Welcome</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">N1CTF Junior 2026 WriteUp (1/2)</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 26, 2026&nbsp;&nbsp;23:13:33</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Wizard-Time"><a href="#Wizard-Time" class="headerlink" title="Wizard Time"></a>Wizard Time</h1><p>魔法时间</p>
+<p>拖入IDA可以发现是被混淆了的，并且在TLS回调函数中也有反调试。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769306786063-249fb002-fe18-442f-9618-648bd2419bec.png"></p>
+<p>函数名称被混淆，先看字符串（上面的图是后面截的，符号已经恢复部分）</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769340446737-8673a884-4277-408f-aad9-4277e2405895.png"></p>
+<p>可以发现这个是mingw-w64 编译的，我们照葫芦画瓢，编译一个出来，然后bindiff恢复符号。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769307217668-48c5dfc5-e821-4edc-bd34-d4a22a5b1598.png"></p>
+<p>虽然没改变多少，但是心理慰藉还是有的。放入x64dbg动调看哪里等待输入</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769307699892-d3bd400a-98cc-425f-a846-b315fd228242.png"></p>
+<p>可以发现就是这片代码，v5是 5* 65的char数组</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769340604511-e99b41d8-1601-476d-8091-c4ce74b7cea9.png"></p>
+<p>接下来就是校验输入，v4从上下文可以知道是输入字符串的长度，也是一个数组。校验函数的返回值为130才能判断为正确</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769340705907-a1075b80-fa80-421f-a66c-2d41e02e51d0.png"></p>
+<p>check_function的逻辑比较简单，将输入的字符串挨个字符处理，每个字符转换为与’a’的相对差，然后在定位到Dest二维数组中，每出现一次就加上<code>2^k</code>。最后Dest数组要和flagMat数组进行以一比对，相同才正确。这个tarMat数组没有仔细研究，根据后面的显示效果来看，应该是跟最后显示flag有关。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769340992493-3b718b59-b911-45e6-a507-44de10331f15.png"></p>
+<p>接下来要做的就是求解出输入的5个字符串，想求解方法我想了好一段时间，后面想到 <code>1&lt;&lt;k</code>可以当作位运算理解，把这个二维数组当成矩阵位图，就可以求解。</p>
+<p>exp:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//flagMat太长，就不贴出来了</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">char</span> buff[<span class="number">5</span>][<span class="number">64</span>] = &#123; <span class="literal">NULL</span> &#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> j = <span class="number">0</span>; j != <span class="string">&#x27;z&#x27;</span>-<span class="string">&#x27;a&#x27;</span><span class="number">+1</span>; ++j) &#123;</span><br><span class="line">            <span class="keyword">auto</span> map = flagMat[i * <span class="number">26</span> + j];</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k != <span class="number">64</span>; ++k) &#123;</span><br><span class="line">                <span class="keyword">if</span> (map &amp; (<span class="number">1ll</span> &lt;&lt; k)) &#123;</span><br><span class="line">                    buff[i][k] = j + <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d: %s\n&quot;</span>, i, buff[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输入后就获得了这个：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769309916772-2f5540b1-b0de-45c2-9a8f-f8830e67565e.png"></p>
+<p>不过这个确实考查做题人能否在短时间内恢复眼睛疲劳并且分辨出相似的字符。</p>
+<p>通过不断猜测，我前前后后试了这些flag</p>
+<p>3174273 55 177317A34 8  264 8 1 37314D33</p>
+<p>317427355177317A3482648137314D33</p>
+<p>317427358F77317A3482648F37314D33</p>
+<p>317427388F77317A3482648F37314D33</p>
+<p>317427355F77317A3452645F37314D33</p>
+<p>317427388F77317A3482648F37314D33</p>
+<p>后面我突然想到，flag可能不是这种随机值，而是base或者hex。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769314422211-dc3d92b2-0413-417d-ac1a-457ec32d0710.png"></p>
+<p>最后的flag就是<code>flag{1t&#39;5_w1z4Rd_71M3}</code></p>
+<p>赛前做了长城杯、强网杯的题目，flag都是数字+小写字母的组合，导致我一开始没有想到这个是一个hex字符串。</p>
+<h1 id="Microsoft-VS-Code"><a href="#Microsoft-VS-Code" class="headerlink" title="Microsoft VS Code"></a>Microsoft VS Code</h1><p>微软大战代码</p>
+<p>main函数里的运算非常复杂，但是采用了系统提供的加密库。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769343417437-d5c6f9a2-c9a7-4c11-a8f1-59c896dfbda0.png"></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769440533575-0f608668-9f01-4703-8860-8cc37c38ffb2.png"></p>
+<p>程序有反调试，不过x64dbg带ScyllaHide插件可以直接过，对照IDA的源代码，找到加密类型和密钥即可。</p>
+<p>在x64dbg中可以确定所有的参数：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769430009203-501e6769-ecc3-4dff-a2ba-b696dcd4ea35.png"></p>
+<p>这个是AES  256 CBC 加密，我们把密钥、密文和iv向量dump出来</p>
+<p>密码：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769430248186-ad15815c-c750-4a9e-a897-a2d32a10254f.png"></p>
+<p>iv</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769430834402-676c1309-12f2-4b27-8018-16f361b70d37.png"></p>
+<p>密文程序里面现成的</p>
+<p>可以写出脚本：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">from Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line">from Crypto.Util.Padding <span class="keyword">import</span> unpad</span><br><span class="line"></span><br><span class="line">key = <span class="built_in">bytes</span>([</span><br><span class="line">    <span class="number">0x00</span>, <span class="number">0x01</span>, <span class="number">0x02</span>, <span class="number">0x03</span>, <span class="number">0x04</span>, <span class="number">0x05</span>, <span class="number">0x06</span>, <span class="number">0x07</span>, <span class="number">0x08</span>, <span class="number">0x09</span>, <span class="number">0x0A</span>, <span class="number">0x0B</span>, <span class="number">0x0C</span>, <span class="number">0x0D</span>, <span class="number">0x0E</span>, <span class="number">0x0F</span>,</span><br><span class="line">    <span class="number">0x47</span>, <span class="number">0x11</span>, <span class="number">0x7B</span>, <span class="number">0x13</span>, <span class="number">0x7A</span>, <span class="number">0x15</span>, <span class="number">0x72</span>, <span class="number">0x17</span>, <span class="number">0x77</span>, <span class="number">0x19</span>, <span class="number">0x6D</span>, <span class="number">0x1B</span>, <span class="number">0x6F</span>, <span class="number">0x1D</span>, <span class="number">0x3E</span>, <span class="number">0x1F</span></span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">iv_data = [</span><br><span class="line">    <span class="number">0xFF</span>, <span class="number">0xEE</span>, <span class="number">0xDD</span>, <span class="number">0xCC</span>, <span class="number">0xBB</span>, <span class="number">0xAA</span>, <span class="number">0x99</span>, <span class="number">0x88</span>, <span class="number">0x77</span>, <span class="number">0x66</span>, <span class="number">0x55</span>, <span class="number">0x44</span>, <span class="number">0x33</span>, <span class="number">0x22</span>, <span class="number">0x11</span>,<span class="number">0</span></span><br><span class="line">]</span><br><span class="line">iv = <span class="built_in">bytes</span>(iv_data)</span><br><span class="line"></span><br><span class="line">data = <span class="built_in">bytes</span>([</span><br><span class="line">    <span class="number">0xDE</span>, <span class="number">0x58</span>, <span class="number">0x46</span>, <span class="number">0x70</span>, <span class="number">0xEB</span>, <span class="number">0xC7</span>, <span class="number">0x47</span>, <span class="number">0x06</span>, <span class="number">0x62</span>, <span class="number">0xEA</span>, <span class="number">0xF6</span>, <span class="number">0x49</span>, <span class="number">0x03</span>, <span class="number">0xB8</span>, <span class="number">0x8E</span>, <span class="number">0x35</span>,</span><br><span class="line">    <span class="number">0xF1</span>, <span class="number">0xF8</span>, <span class="number">0x8F</span>, <span class="number">0x4E</span>, <span class="number">0x18</span>, <span class="number">0xD0</span>, <span class="number">0x8B</span>, <span class="number">0xD2</span>, <span class="number">0x5C</span>, <span class="number">0xF3</span>, <span class="number">0x53</span>, <span class="number">0x2F</span>, <span class="number">0x9F</span>, <span class="number">0x36</span>, <span class="number">0xE4</span>, <span class="number">0x99</span>,</span><br><span class="line">    <span class="number">0xBC</span>, <span class="number">0xE0</span>, <span class="number">0x15</span>, <span class="number">0xCF</span>, <span class="number">0x95</span>, <span class="number">0x54</span>, <span class="number">0x36</span>, <span class="number">0xD3</span>, <span class="number">0x8F</span>, <span class="number">0x9F</span>, <span class="number">0x06</span>, <span class="number">0x8F</span>, <span class="number">0xCF</span>, <span class="number">0x8B</span>, <span class="number">0x3F</span>, <span class="number">0x0B</span></span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="meta">#aes = AES.new(key, AES.MODE_EBC)</span></span><br><span class="line">aes = AES.<span class="built_in">new</span>(key, AES.MODE_CBC, iv)</span><br><span class="line">da = aes.<span class="built_in">decrypt</span>(data)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;falg:&#123;da.decode(&#x27;utf-8&#x27;, errors=&#x27;ignore&#x27;)&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>flag{M1cr0SOf7_V5_C0dE,d0_Y0U_Kn0W??}</code></p>
+<p>不过我提交的时候发现上面的flag过不了，后面有人提交之后我再提交的，遗憾二血。</p>
+<p>当时以为flag不对，因为…</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769431300978-23855c74-0189-4015-b67e-f80693c32861.png"></p>
+<p>这个就和题目描述的不一样了，正确的flag不唯一</p>
+<h1 id="MaybeAndroid"><a href="#MaybeAndroid" class="headerlink" title="MaybeAndroid"></a>MaybeAndroid</h1><p>安卓题目</p>
+<p>apk放入jdax进行分析，ktolin编写的。放入虚拟机可知，我们需要输入一个注册码，这个注册码可能是我们要求的flag。我们搜索字符串可以发现相关的代码，下面有个<code>isVip</code></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769317734181-bd9f5e7e-6e25-44eb-a2c3-d33cd1b87438.png"></p>
+<p>我们继续追踪，很明显，这里是AES CBC PKCS5Padding的加密方式，IV向量，密钥，加密后的数据全部可以获得</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769317730565-5c2fcc36-ab4a-4358-81e4-6e3297ee92ea.png"></p>
+<p>求出注册码</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769317701551-a519feb8-26dc-49a3-9975-d602c45392bb.png"></p>
+<p>但是这个程序还有一个页面，用来执行python程序，并且flag_check代码需要vip执行，我们阅读这个文件的源码，发现是非常奇怪的代码，还有emoji，可以联想到对open和符号运算符函数进行了重载。我们可以MT管理器定位到flag_check.py，同级目录下还有一个文件，这个文件内部就是对上述的函数进行了重载。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769342864701-f1fd466b-4654-4289-89ff-62a9facc6aa4.png"></p>
+<p>看到箭头的两处已经能大概猜出是rc4加密了。rc4是对称加密，输入密文输出就是明文。写出RC4加密就行。这里需要注意还要异或一次</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">def <span class="title">rc4_keystream</span><span class="params">(key: bytes, n: <span class="type">int</span>)</span>:</span></span><br><span class="line"><span class="function">    Sbox =</span> <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">256</span>))</span><br><span class="line">    j = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">        #TBox</span><br><span class="line">        j = (j + Sbox[i] + key[i % <span class="built_in">len</span>(key)]) % <span class="number">256</span></span><br><span class="line">        Sbox[i], Sbox[j] = Sbox[j], Sbox[i]</span><br><span class="line">    # PRGA</span><br><span class="line">    i = j = <span class="number">0</span></span><br><span class="line">    out = []</span><br><span class="line">    <span class="keyword">for</span> _ in <span class="built_in">range</span>(n):</span><br><span class="line">        i = (i + <span class="number">1</span>) % <span class="number">256</span></span><br><span class="line">        j = (j + Sbox[i]) % <span class="number">256</span></span><br><span class="line">        Sbox[i], Sbox[j] = Sbox[j], Sbox[i]</span><br><span class="line">        out.<span class="built_in">append</span>(Sbox[(Sbox[i] + Sbox[j]) % <span class="number">256</span>])</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bytes</span>(out)</span><br><span class="line"></span><br><span class="line">key = b<span class="string">&quot;y0u_@re_vip_Us3r&quot;</span></span><br><span class="line">enc_data = bytes.<span class="built_in">fromhex</span>(<span class="string">&quot;738d9ea5a7c5824836d63c872324e36936c1dd7026b2df418268066a936256a7&quot;</span>)</span><br><span class="line">n = <span class="number">32</span> </span><br><span class="line">ks = <span class="built_in">rc4_keystream</span>(key, n)</span><br><span class="line">plaintext = <span class="built_in">bytes</span>([ks[i] ^ enc_data[i]^<span class="number">0x55</span> <span class="keyword">for</span> i in <span class="built_in">range</span>(n)])</span><br><span class="line">s = plaintext.<span class="built_in">decode</span>(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;flag&#123;&quot;</span> + s + <span class="string">&quot;&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>flag{5f19b83de29bd46e9e02f7f88bfb4ea2}</code></p>
+<h1 id="Find-my-time"><a href="#Find-my-time" class="headerlink" title="Find my time"></a>Find my time</h1><p>寻找正确时间</p>
+<p>[使用AI]</p>
+<p>这是一道Qt 5.15 GUI 题目，我理清楚逻辑和处理IDA抽风花了很长时间</p>
+<p>根据程序的名称和提示，还有运行时显示的东西，大体上就能判断出是要找出一个正确的时间，然后程序就会以这个时间作为密钥进行解密，解密后就会显示在窗口里。</p>
+<p>程序放入IDA时，我留意到了非常长的.rdata段，但是程序似乎不会在运行时解压什么东西。经过我x64dbg的追踪，并没有出现释放文件和脱壳。</p>
+<p>程序的主要逻辑隐藏的比较深</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769433758666-52465a8b-8c04-4444-a4c3-f8c0f28c3eaa.png"></p>
+<p>这个函数可以确定是Qt项目中的main函数。为了方便分析Qt的各种特性，可以写一个Qt程序进行对照分析。</p>
+<p>这里可以看出</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435316646-23930a68-c1bf-4801-adcb-f260b3e63d05.png"><!-- 这是一张图片，ocr 内容为： --><br><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435327639-b5e6991f-db43-44cd-ad1c-15c41b96e02b.png"><!-- 这是一张图片，ocr 内容为： --><br><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435368490-e353a586-1e58-4250-b094-c0386ad7d7b0.png"></p>
+<p>信号槽的连接还是有Connect符号，可以直接定位到槽函数和信号函数</p>
+<p>找到了槽函数和QTimer</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769433872582-f3adcc3b-f097-4800-bdd6-2f5e642ac26f.png"></p>
+<p>有Pixmap，说明程序在哪里加载了位图，或者我们的flag就是贴在图片里面的。但是先把重心返回到槽函数中</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769433955291-c2bad1f1-b718-4e79-ba83-69297a0fbed3.png"></p>
+<p>槽函数也许有混淆或者被优化了，IDA的伪代码有很多的错误，槽函数的参数数量最多只有this指针。这里我们可以发现获取了系统时间，并且时间格式是FILETIME，并且还做了一些神秘的转换。把转换的代码贴入浏览器：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769406359982-27d9337d-7672-4849-8c54-5f09fad696bd.png"></p>
+<p>看来是把FILETIME时间戳转换为了UNIX的时间戳，二者的起始时间不一样，精度也不同。</p>
+<p>接下来是<code>sub_1400017C0</code>函数，第一眼就可以看见对FILETIME结构体赋值，很明显，IDA推导的结构体类型并不正确，原来的结构体大小要更大。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435701777-c61ab014-85cd-4e5c-9e89-61abb3f3d74c.png"></p>
+<p>下面一个循环可以直接看出是计算年数，<code>n1970``366</code>和<code>365</code>说明的很明显了</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435769048-3c79f6bc-af4a-4f4a-99b8-58c5c078f4db.png"></p>
+<p>后面经过我的动调，可以确定这个是将FILETIME进行时间分离的，动调可以看出分离了</p>
+<p>YYYY MM DD HH MM SS</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769436450202-8f53965c-050b-4ce1-81aa-e68a981e0cad.png"></p>
+<p>还有一个月天数数组：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769436507249-8dba50ef-26b3-43ab-9c10-e7c25d0677c1.png"></p>
+<p>用在了这里</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769436544224-316c533f-9226-4e87-ae7e-2189332499ba.png"></p>
+<p>动调可以把大多数东西看清楚</p>
+<p> 下面还能看到一大段判断函数的调用</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769435948277-0ac110bf-b0af-4e82-b554-a162df6b3ca9.png"></p>
+<p>接下来我开始深入研究<code>sub_7FF6FB6B1540</code>函数，调试返回的结果看不出什么东西，但是能够发现这个很关键的东西：<!-- 这是一张图片，ocr 内容为： --><br><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769324532820-048e1f67-7a4b-4c05-b342-c310998fce05.png"></p>
+<p>程序包含了gmp库。为了降低逆向难度，我这里使用了网上别人编译的6.3.0的版本进行了bindiff合并符号</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769436793056-98f916a9-fa39-49fb-abb9-349f94591ad7.png"></p>
+<p>但是效果非常有限，上面的函数并没有加载出什么符号。但是毕竟出现了**prime,**就猜测这个函数与质数有关。</p>
+<p>后面为了快速分析<code>sub_7FF6FB6B17C0</code>（时间处理函数）干了什么和恢复可读性，我将伪代码喂给了AI并让其生成了一个结构体</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769437042343-16f8f6f9-a376-4e69-b7ad-25cbb4c6af87.png"></p>
+<p>可读性增加了很多。经过我的动调测试，这个确实是测试输入的整数是否为质数<code>is_prime_1</code>。接下来我们继续动调，观察执行的流程。由于IDA显示的伪代码并不正确，太过于有误导性，因此我们看汇编，观察传入函数<code>is_prime_1</code>的参数值<code>rcx</code>。经过了漫长的调试，我分析出了这些：</p>
+<p>第一个判断的是year是不是质数</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769406774889-7e8b25d2-aa35-4cf8-b252-0e9c9dc73420.png"></p>
+<p>后面判断天</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769406811576-0949d1c1-f3ca-4159-8b43-4e30724448fc.png"></p>
+<p>以此类推，动调追踪就可以。</p>
+<p>不过月份的判断我踩了坑，判断逻辑：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407726336-9aa466ee-3e8f-4ed5-a7fc-9ef8fc8c7216.png"></p>
+<p>当初一眼扫过去以为月份是必须是good_month里面的，里面只包含了2 3 5 7，在下面格式化后不能有0的条件相互冲突了，后面再分析时发现11月也可以，也只能是11月。 </p>
+<p>下一个步到达这里：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769406844826-e9b0b2a1-8882-46e4-9056-a3499d07b1e6.png"></p>
+<p>这个就是把时间格式化为YYYYmmDDHHMMSS，并且校验字符串里面不能包含0</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407084041-15bc4f8d-a6e3-4712-abd6-b1fec09fdb3f.png"></p>
+<p>后面跟着流程图走，还有校验</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407171684-4a50b375-cebd-41ff-aaa6-b1522d9bfe25.png"></p>
+<p>这个字符串必须是质数，下面还有</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407265824-e7654759-7a36-4522-9fb7-072c255b7927.png"></p>
+<p>这个是判断unix_time+YYYYMMDDHHMMSS 是要为质数，不过我在动调的时候就发现，还有一个寄存器里面的字符串是YYYYMMDDHHMMSS+unix_time的，这个在后面进行判断了</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407349289-21950d60-b6b9-4c6e-a2db-d38178b185be.png"></p>
+<p>经过这些质数检验后，最终来到了这里</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407378772-abea454f-ccfe-4f59-9506-ecb9d11f57ee.png"></p>
+<p>这个块就是时间正确的分支。给时间结构体第一位设置了1，这个我们可以从解密函数里看到被使用了<!-- 这是一张图片，ocr 内容为： --><br><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769438983020-e1734d14-ae5a-495c-a197-3de702a28018.png"></p>
+<p>由此推断，这个分支就是正确的分支</p>
+<p>总结一下，这个函数要求输入的时间是：</p>
+<ol>
+<li>year 是质数</li>
+<li>月份是质数 </li>
+<li>day 是质数且不为一</li>
+<li>hour min second 都是质数，且不为一</li>
+<li>Unix时间戳是质数</li>
+<li>str(YYYYMMDDHHMMSS)是质数而且不包含零</li>
+<li>str(unix_timestamp) + str(YYYYMMDDHHMMSS) 与 str(YYYYMMDDHHMMSS)str+(unix_timestamp)也是质数</li>
+</ol>
+<p>约束条件很复杂，我尝试Python穷举，但是时间太过于漫长，于是喂给了AI，AI生成了两个时间段：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407882672-93146340-c2d1-429c-b2e6-b91331c06dd4.png"></p>
+<p>调试的时候把这两个时间戳写进内存就可以了</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769407968848-f3ec051a-bb9e-447b-9a7f-fef882df9ba0.png"></p>
+<p><code>flag{4Kr0s5_Th0u54nDs_0f_yE4Rs_u_f1nd_m3_1nTh3_sE4_oF_7imE}</code></p>
+<p>图片是一半一半出现的，解密算法就没有去深入研究（不过都是质数了，那大概是RSA了吧）</p>
+<p>此外，我也分析了解密函数，因为分析时间判断函数我曾一度陷入死胡同，我就想能否通过破解解密函数来获取flag，但是并未深入，这个函数的比较复杂。我尝试过在x64dbg里面GetSystemTimeAsFileTime修改的时间写死，不过屏幕显示出来的字节码还是变化的，这个就超乎我的预料的，解密函数是比较复杂的，我猜测可能是不符和条件的就会随机生成字符</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769438172530-e79fbcd9-45e2-4972-b7ac-1759026db907.png"></p>
+<p>我也尝试过直接把结构体头部第一个字节直接改成1，但是也没有什么效果</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769438508673-13f40a94-9e8a-408a-a6f0-72315f945da5.png"></p>
+<p>于是我就放弃了这条路，再次深入时间处理函数</p>
+<p>同时，我发现有另外两函数与槽函数长得一模一样，经过的我的动调验证，这个两个函数并没有被调用。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769432806258-13362003-17f2-4b40-8c46-7766878228a4.png"></p>
+<p>这个有可能是QT元对象系统生成的东西</p>
+<p>还有，分析质数函数时，这个函数的参数看起来非常之多，一开始我也没搞清楚这个函数到底用了哪些参数，根据调用约定只有一个参数，IDA显示的伪代码非常之混乱。</p>
+<p>后面喂给了AI生成了比较详细的代码</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769431677103-e8fd6970-db1e-42bc-966a-04105f8de1a9.png"></p>
+<p>这个函数其实只有一个参数，IDA抽风搞出那么多，不过我不太理解的是为什么要先把数字转换为字符串，再转为mpz_t，再来判断质数，转换字符串这个步骤我感觉可以去掉（混淆另说）</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1769408294395-7e5f89f4-3eff-4342-adef-031ae36ac01c.png"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/reverse/"># reverse</a>
+                    
+                        <a href="/tags/wp/"># wp</a>
+                    
+                        <a href="/tags/RC4%E5%8A%A0%E5%AF%86/"># RC4加密</a>
+                    
+                        <a href="/tags/N1CTF/"># N1CTF</a>
+                    
+                        <a href="/tags/%E8%84%B1%E5%A3%B3/"># 脱壳</a>
+                    
+                        <a href="/tags/Android%E9%80%86%E5%90%91/"># Android逆向</a>
+                    
+                        <a href="/tags/Qt%E9%80%86%E5%90%91/"># Qt逆向</a>
+                    
+                        <a href="/tags/AES%E5%8A%A0%E5%AF%86/"># AES加密</a>
+                    
+                        <a href="/tags/GMP%E5%BA%93/"># GMP库</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/CTF/70fe03727d41/">[Newstar2025] Reverse3 花指令</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

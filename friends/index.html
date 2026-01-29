@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>友情链接 | Welcome</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    <article class="post-wrap page">
+        
+        <h2 class="post-title">友情链接</h2>
+        
+        <section class="post-content">
+            <style>
+.friends-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2em 0;
+}
+
+.friends-section {
+  margin-bottom: 3em;
+}
+
+.friends-section h2 {
+  font-size: 1.8em;
+  margin-bottom: 1.5em;
+  color: #2d96bd;
+  border-bottom: 2px solid #2d96bd;
+  padding-bottom: 0.5em;
+}
+
+.friends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5em;
+  margin-top: 2em;
+}
+
+.friend-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.friend-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(45, 150, 189, 0.25);
+}
+
+.friend-avatar-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.friend-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.friend-card:hover .friend-avatar {
+  transform: scale(1.1);
+}
+
+.friend-info {
+  padding: 1.2em;
+  background: #fff;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.friend-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2d96bd;
+  margin-bottom: 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-desc {
+  color: #666;
+  font-size: 0.9em;
+  line-height: 1.5;
+  margin-bottom: 0.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 2.7em;
+}
+
+.friend-link {
+  display: inline-block;
+  padding: 0.4em 1.2em;
+  background: #2d96bd;
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-size: 0.85em;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.friend-link:hover {
+  background: #ef3982;
+  transform: scale(1.05);
+}
+
+.apply-info {
+  background: #f8f9fa;
+  padding: 2em;
+  border-radius: 12px;
+  margin-top: 3em;
+}
+
+.apply-info h3 {
+  color: #2d96bd;
+  margin-bottom: 1em;
+  font-size: 1.4em;
+}
+
+.apply-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.apply-info li {
+  padding: 0.5em 0;
+  color: #666;
+  font-size: 0.95em;
+}
+
+.apply-info li:before {
+  content: "✓ ";
+  color: #2d96bd;
+  font-weight: bold;
+  margin-right: 0.5em;
+}
+
+.apply-info pre {
+  background: #fff;
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9em;
+}
+
+/* 深色模式适配 */
+body.dark-theme .friend-card {
+  background: #3e3e3e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-theme .friend-card:hover {
+  box-shadow: 0 8px 24px rgba(255,255,255,0.15);
+}
+
+body.dark-theme .friend-info {
+  background: #3e3e3e;
+}
+
+body.dark-theme .friend-name {
+  color: #fff;
+}
+
+body.dark-theme .friend-desc {
+  color: #a9a9b3;
+}
+
+body.dark-theme .friends-section h2 {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+body.dark-theme .apply-info {
+  background: #3e3e3e;
+}
+
+body.dark-theme .apply-info h3 {
+  color: #fff;
+}
+
+body.dark-theme .apply-info li {
+  color: #a9a9b3;
+}
+
+body.dark-theme .apply-info pre {
+  background: #2a2a2a;
+  border-color: #555;
+  color: #a9a9b3;
+}
+
+@media (max-width: 768px) {
+  .friends-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1em;
+  }
+  
+  .friend-avatar-container {
+    height: 160px;
+  }
+}
+</style>
+
+<div class="friends-container">
+
+<!-- 进击的RE伙伴们 -->
+<div class="friends-section">
+  <h2>🚀 进击的RE伙伴们！</h2>
+  <div class="friends-grid">
+    <!-- 示例友链 - 请替换为真实信息 -->
+    <div class="friend-card">
+      <div class="friend-avatar-container">
+        <img class="friend-avatar" src="/image/Zenquiem.png" alt="示例博客">
+      </div>
+      <div class="friend-info">
+        <div class="friend-name">Zenquiem</div>
+        <div class="friend-desc">这是一个示例友链描述，可以写一些简短的介绍</div>
+        <a class="friend-link" href="https://zenquietus.top/" target="_blank">Visit</a>
+      </div>
+    </div>
+    <!-- 在这里添加更多RE方向的友链 -->
+  </div>
+</div>
+
+<!-- 其他朋友 -->
+<div class="friends-section">
+  <h2>🤝 Friends</h2>
+  <div class="friends-grid">
+    
+<pre><code>&lt;!-- 在这里添加其他方向的友链 --&gt;
+</code></pre>
+  </div>
+</div>
+
+<!-- 申请友链 -->
+<div class="apply-info">
+  <h3>💡 申请友链</h3>
+  <p>如果你想和我交换友链，请确保：</p>
+  <ul>
+    <li>博客内容积极向上</li>
+    <li>网站可以正常访问</li>
+    <li>最好是技术类博客</li>
+    <li>定期更新内容</li>
+  </ul>
+  <p style="margin-top: 1.5em;">
+    <strong>申请方式：</strong>通过 <a href="https://github.com/Fering11/Fering11.github.io/issues" target="_blank" style="color: #2d96bd;">GitHub Issues</a> 联系我，或在下方评论区留言。
+  </p>
+  <p style="margin-top: 1.5em;">
+    <strong>本站信息：</strong>
+  </p>
+  <pre>名称: Fering11
+链接: https://Fering11.github.io
+头像: https://Fering11.github.io/image/head.png
+描述: 学生 | 逆向工程 | CTF</pre>
+</div>
+
+</div>
+
+        </section>
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

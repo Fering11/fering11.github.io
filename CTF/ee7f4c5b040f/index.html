@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>[Newstar2025] Reverse4 Dancing Keys | Welcome</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">[Newstar2025] Reverse4 Dancing Keys</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十月 21, 2025&nbsp;&nbsp;20:00:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>这是一个很有趣的题目，在调试的时候密钥是随机变化的。</p>
+<p>下载下来的文件没有加壳，直接拖入IDA分析，可以直接看到main函数</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761443430758-ecdff0d0-c521-453f-9ef9-d0be3a36a462.png"></p>
+<p>首先是4个4个字节的密钥，可以很像是TEA算法，但是还不确定，输入的flag是48字节，首先进入了一个函数，里面就是字节换序：</p>
+<p>:::color1<br>*(_DWORD <em>)(4LL * i + a2) &#x3D; (</em>(unsigned __int8 *)(4 * i + 2LL + s) &lt;&lt; 16) | *(unsigned __int8 <em>)(4 * i + 3LL + s) | (</em>(unsigned __int8 <em>)(4 * i + s) &lt;&lt; 8) | (</em>(unsigned __int8 *)(4 * i + 1LL + s) &lt;&lt; 24);</p>
+<p>:::</p>
+<p>下面是对v8全部字节进行加密操作，rand_tea里面是把v6,v7全部改写了的，不是表面上v6变了，v7没变。进入rand_tea函数，可以观察到就是TEA加密的结构，但是是魔改后的：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761443598580-280aef97-d332-4a30-b70a-73eb3bd43ca3.png"></p>
+<p>然后就能发现一个关键的东西：rand函数，众所周知，rand是随机数函数，这个就….有点麻烦了，先暂时放着</p>
+<p>回到main函数，之后又是一个<code>recover_mass</code>函数，里面其实也是字节变序的。</p>
+<p>最后经过一系列的变换后，与enflag进行比较，相同就是flag。那么，我们的思路就是反过来，比较好解决的就是<code>recover_mass</code>和<code>make_mass</code>，可以写出逆向函数:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">recover_mass_re</span><span class="params">(_DWORD* a1, <span class="type">unsigned</span> <span class="type">char</span>* a2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">12</span>; ++i) &#123;</span><br><span class="line">        a1[i] = a2[<span class="number">4</span> * i + <span class="number">2</span>];</span><br><span class="line">        <span class="built_in">BYTE1</span>(a1[i]) = a2[<span class="number">4</span> * i + <span class="number">3</span>];</span><br><span class="line">        <span class="built_in">BYTE2</span>(a1[i]) = a2[<span class="number">4</span> * i];</span><br><span class="line">        <span class="built_in">HIBYTE</span>(a1[i]) = a2[<span class="number">4</span> * i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">make_mass_re</span><span class="params">(<span class="type">char</span>* s, _DWORD* a2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">12</span>; ++i) &#123;</span><br><span class="line">        s[<span class="number">4</span> * i] = <span class="built_in">BYTE1</span>(a2[i]);</span><br><span class="line">        s[<span class="number">4</span> * i + <span class="number">1</span>] = <span class="built_in">BYTE3</span>(a2[i]);</span><br><span class="line">        s[<span class="number">4</span> * i + <span class="number">2</span>] = <span class="built_in">BYTE2</span>(a2[i]);</span><br><span class="line">        s[<span class="number">4</span> * i + <span class="number">3</span>] = <span class="built_in">BYTE</span>(a2[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>rand_tea</code>其实也很好写出逆向函数，但是有随机数的存在，让 v7和 v5的值不确定。我们假设v7确定，就能求出v5，先写出逆向函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">rand_tea_re</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span>* data, _DWORD* key,uint32 v7)</span> </span>&#123;</span><br><span class="line">    __int64 result; <span class="comment">// rax</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> v3; <span class="comment">// [rsp+18h] [rbp-18h]</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> v4; <span class="comment">// [rsp+1Ch] [rbp-14h]</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> v5; <span class="comment">// [rsp+20h] [rbp-10h]</span></span><br><span class="line">    <span class="type">int</span> i; <span class="comment">// [rsp+24h] [rbp-Ch]</span></span><br><span class="line"></span><br><span class="line">    v3 = *data;</span><br><span class="line">    v4 = data[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    v5 = <span class="number">0xDEADBEEF</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">114</span>; ++i) &#123;</span><br><span class="line">        v5 += v7 * i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">113</span>; i &gt;= <span class="number">0</span>; --i) &#123;</span><br><span class="line">        v4 -= (v3 - v5) ^ key[<span class="number">1</span>] ^ (v3 &lt;&lt; ((<span class="type">char</span>)(i + <span class="number">2</span>) % <span class="number">6</span>)) ^ (v3 &gt;&gt; ((<span class="type">int</span>)(i + <span class="number">3</span>) % <span class="number">7</span>)) ^ key[<span class="number">3</span>];</span><br><span class="line">        v3 -= (v4 - v5) ^ key[<span class="number">2</span>] ^ (v4 &lt;&lt; ((<span class="type">char</span>)(i + <span class="number">1</span>) % <span class="number">5</span>)) ^ (v4 &gt;&gt; ((i + <span class="number">4</span>) &amp; <span class="number">7</span>)) ^ *key;</span><br><span class="line">        v5 -= v7 * i;</span><br><span class="line">    &#125;</span><br><span class="line">    *data = v3;</span><br><span class="line">    result = v4;</span><br><span class="line">    data[<span class="number">1</span>] = v4;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们进入rand函数进行分析：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444099043-a2395244-0085-4197-a9c0-adf4b9a34572.png"></p>
+<p>里面是对rand_sand进行一系列的操作，我们查看rand_sand是从哪里来的</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444621914-f4f12865-61c1-4e84-b1b4-2a7825d3f83e.png"></p>
+<p>可惜是一个变量，不是常量，查看交叉引用，果然，出现了一个奇怪的函数：</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444708825-eba795b4-24ac-414d-a429-bdea80740dbb.png"></p>
+<p>rand_sand就是由它初始化的，我们查找这个函数的引用，欸，竟然是pthread_create</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444746138-f5df6f90-4cf7-4e38-a338-abff43b55034.png"></p>
+<p>再查询该函数的引用，结果是init_array，函数会在程序进入main函数之前就执行</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444790785-3ea07453-13d7-4935-83a3-162f62bdc359.png"></p>
+<p>再看<code>rand_sand</code>,里面有一个<code>sleep(1u)</code>，然后再对key进行变换，延迟枪哈，所以进入<code>rand_tea</code>进行加密的密钥并不是<code>main</code>里面的臭数字。我们看<code>rand_sand</code>里面的<code>sub_40128A</code>。</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2025/png/61141865/1761444927778-addfcc45-7bbb-464c-a68e-5213c222abd2.png"></p>
+<p>里面有一个从 <code>start</code>函数到 <code>main</code>函数结束的代码字节遍历，下面是一个<code>ptrace</code>，还是<code>trace_me</code>，</p>
+<p>如果调试器附加，ptrace会返回-1，否则就是0。</p>
+<p>总结一下：该程序自己有一个init_array块，里面创建了一个线程，并且对start到main函数字节码的遍历，然后再使用ptrace的值，构成了一个rand_sand，该线程休眠了1秒，这其中的一秒，main函数完成了对key的初始化，然后等待用户的输入。回到副线程，休眠过后，就对key进行异或操作，之后退出。用户输入flag后，进行字节码的换序，然后进入rand_tea加密，之后再进行一次乱序，最后和enflag进行比较。</p>
+<p>上面是我做出来后的总结，其实过程并不是那么顺利，dancing keys为什么会dancing？问题就是出现在遍历字节码上。这个遍历把大部分函数都遍历了一遍。如果想要调试查看keys的值，就会发现keys一直在变换。原因就是调试器断点，特别是软件断点0xCC，修改了字节码，就会导致另外一个线程在遍历时，读取到了不同字节编码，导致rand_sand变化。ptrace也有反调试的效果，调试时会返回-1，非调试状态返回0。但是在这里修改是没有意义的，因为上面会遍历函数字节编码。 所以不能对程序里面的函数进行修改或者调试，我们可以把 从start 到 main的字节复制下来，自己进行一个变换，然后自己写一个rand_sand 和 rand函数，再来到main函数逆向。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">calc_sand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> start[<span class="number">280</span>] = &#123;</span><br><span class="line">    <span class="number">0x8949ED31FA1E0FF3</span>, <span class="number">0xE48348E289485ED1</span>, <span class="number">0xC931C031455450F0</span>, <span class="number">0xFF00401760C7C748</span>,</span><br><span class="line">    <span class="number">0x2E66F400002E8315</span>, <span class="number">0x0000000000841F0F</span>, <span class="number">0x0F2E66C3FA1E0FF3</span>, <span class="number">0x900000000000841F</span>,</span><br><span class="line">    <span class="number">0x503D4800404050B8</span>, <span class="number">0x0000B81374004040</span>, <span class="number">0xBF0974C085480000</span>, <span class="number">0x9066E0FF00404050</span>,</span><br><span class="line">    <span class="number">0x00841F0F2E6666C3</span>, <span class="number">0x00401F0F00000000</span>, <span class="number">0xEE814800404050BE</span>, <span class="number">0x48F0894800404050</span>,</span><br><span class="line">    <span class="number">0x4803F8C1483FEEC1</span>, <span class="number">0xB81174FED148C601</span>, <span class="number">0x74C0854800000000</span>, <span class="number">0xE0FF00404050BF07</span>,</span><br><span class="line">    <span class="number">0x00841F0F2E6666C3</span>, <span class="number">0x00401F0F00000000</span>, <span class="number">0x2E653D80FA1E0FF3</span>, <span class="number">0x8948551375000000</span>,</span><br><span class="line">    <span class="number">0x05C6FFFFFF7AE8E5</span>, <span class="number">0x90C35D0100002E53</span>, <span class="number">0x00841F0F2E6666C3</span>, <span class="number">0x00401F0F00000000</span>,</span><br><span class="line">    <span class="number">0x0FF38AEBFA1E0FF3</span>, <span class="number">0x058BE5894855FA1E</span>, <span class="number">0x890BE0C100002E3C</span>, <span class="number">0x3100002E31058BC2</span>,</span><br><span class="line">    <span class="number">0x8B00002E290589D0</span>, <span class="number">0x04E8C100002E2305</span>, <span class="number">0x00002E18058BC289</span>, <span class="number">0x00002E100589D031</span>,</span><br><span class="line">    <span class="number">0xE0C100002E0A058B</span>, <span class="number">0x002DFF058BC28905</span>, <span class="number">0x002DF70589D03100</span>, <span class="number">0xC100002DF1058B00</span>,</span><br><span class="line">    <span class="number">0x2DE6058BC2890EE8</span>, <span class="number">0x2DDE0589D0310000</span>, <span class="number">0x00002DD8058B0000</span>, <span class="number">0x4855FA1E0FF3C35D</span>,</span><br><span class="line">    <span class="number">0x894830EC8348E589</span>, <span class="number">0x45C7D0758948D87D</span>, <span class="number">0xE445C700000000E0</span>, <span class="number">0xD8458B4800000000</span>,</span><br><span class="line">    <span class="number">0xE845C748F0458948</span>, <span class="number">0x8B4834EB00000000</span>, <span class="number">0x0148E8458B48F055</span>, <span class="number">0x48C0B60F00B60FD0</span>,</span><br><span class="line">    <span class="number">0x4501C2AF0FE8558B</span>, <span class="number">0x458B48F0558B48E0</span>, <span class="number">0x0F00B60FD00148E8</span>, <span class="number">0x458348E44531C0B6</span>,</span><br><span class="line">    <span class="number">0x3B48E8458B4801E8</span>, <span class="number">0x000000B9C272D045</span>, <span class="number">0x00BE00000000BA00</span>, <span class="number">0x00000000BF000000</span>,</span><br><span class="line">    <span class="number">0xFDD6E800000000B8</span>, <span class="number">0x8B48F8458948FFFF</span>, <span class="number">0x45AF0FE44533F845</span>, <span class="number">0x55FA1E0FF3C3C9E0</span>,</span><br><span class="line">    <span class="number">0x48E87D8948E58948</span>, <span class="number">0x45C7DC5589E07589</span>, <span class="number">0x008EE900000000FC</span>, <span class="number">0x02E0C1FC458B0000</span>,</span><br><span class="line">    <span class="number">0x8B4803508D489848</span>, <span class="number">0x00B60FD00148E845</span>, <span class="number">0xE2C1FC558BC0B60F</span>, <span class="number">0xE8558B48CA634802</span>,</span><br><span class="line">    <span class="number">0xB60F12B60FCA0148</span>, <span class="number">0x458BC20908E2C1D2</span>, <span class="number">0x8D48984802E0C1FC</span>, <span class="number">0x0148E8458B480248</span>,</span><br><span class="line">    <span class="number">0xC1C0B60F00B60FC8</span>, <span class="number">0x458BC109D18910E0</span>, <span class="number">0x8D48984802E0C1FC</span>, <span class="number">0x0148E8458B480150</span>,</span><br><span class="line">    <span class="number">0xC1C0B60F00B60FD0</span>, <span class="number">0x48FC458BC28918E0</span>, <span class="number">0x00000085348D4898</span>, <span class="number">0xF00148E0458B4800</span>,</span><br><span class="line">    <span class="number">0x01FC45831089CA09</span>, <span class="number">0xC08503508DDC458B</span>, <span class="number">0x453902F8C1C2480F</span>, <span class="number">0x90FFFFFF5B8C0FFC</span>,</span><br><span class="line">    <span class="number">0x55FA1E0FF3C35D90</span>, <span class="number">0x48E87D8948E58948</span>, <span class="number">0x45C7DC5589E07589</span>, <span class="number">0x00C4E900000000FC</span>,</span><br><span class="line">    <span class="number">0x489848FC458B0000</span>, <span class="number">0x480000000085148D</span>, <span class="number">0x088BD00148E8458B</span>, <span class="number">0x984802E0C1FC458B</span>,</span><br><span class="line">    <span class="number">0xE0458B4802508D48</span>, <span class="number">0x8B1088CA89D00148</span>, <span class="number">0x85148D489848FC45</span>, <span class="number">0xE8458B4800000000</span>,</span><br><span class="line">    <span class="number">0x08E8C1008BD00148</span>, <span class="number">0x02E0C1FC458BC189</span>, <span class="number">0x8B4803508D489848</span>, <span class="number">0x88CA89D00148E045</span>,</span><br><span class="line">    <span class="number">0x8D489848FC458B10</span>, <span class="number">0x8B48000000008514</span>, <span class="number">0xC1008BD00148E845</span>, <span class="number">0xC1FC458BC18910E8</span>,</span><br><span class="line">    <span class="number">0x458B48D0634802E0</span>, <span class="number">0x1088CA89D00148E0</span>, <span class="number">0x148D489848FC458B</span>, <span class="number">0x458B480000000085</span>,</span><br><span class="line">    <span class="number">0xE8C1008BD00148E8</span>, <span class="number">0xE0C1FC458BC18918</span>, <span class="number">0x4801508D48984802</span>, <span class="number">0xCA89D00148E0458B</span>,</span><br><span class="line">    <span class="number">0x458B01FC45831088</span>, <span class="number">0xFF308C0FDC453BFC</span>, <span class="number">0x0FF3C35D9090FFFF</span>, <span class="number">0x8348E5894855FA1E</span>,</span><br><span class="line">    <span class="number">0x8D48D87D894830EC</span>, <span class="number">0x458948FFFFFC3305</span>, <span class="number">0x000004E5058D48F0</span>, <span class="number">0x48FFFFFC21158D48</span>,</span><br><span class="line">    <span class="number">0x8B48F8458948D029</span>, <span class="number">0x8948F0458B48F855</span>, <span class="number">0xFFFD61E8C78948D6</span>, <span class="number">0xBF00002B310589FF</span>,</span><br><span class="line">    <span class="number">0xFFFBE7E800000001</span>, <span class="number">0x00000000EC45C7FF</span>, <span class="number">0xE800000000B841EB</span>, <span class="number">0x48EC558BFFFFFCCA</span>,</span><br><span class="line">    <span class="number">0x0000950C8D48D263</span>, <span class="number">0x002B0F158D480000</span>, <span class="number">0xC189D03111148B00</span>, <span class="number">0x148D489848EC458B</span>,</span><br><span class="line">    <span class="number">0x058D480000000085</span>, <span class="number">0x83020C8900002AF4</span>, <span class="number">0x7E03EC7D8301EC45</span>, <span class="number">0xC3C900000000B8B9</span>,</span><br><span class="line">    <span class="number">0xE5894855FA1E0FF3</span>, <span class="number">0x048B486410EC8348</span>, <span class="number">0x4589480000002825</span>, <span class="number">0xB9F0458D48C031F8</span>,</span><br><span class="line">    <span class="number">0x2B158D4800000000</span>, <span class="number">0x00000000BEFFFFFF</span>, <span class="number">0xFFFFFB38E8C78948</span>, <span class="number">0xE8C78948F0458B48</span>,</span><br><span class="line">    <span class="number">0x458B4890FFFFFB0C</span>, <span class="number">0x002825042B4864F8</span>, <span class="number">0xFFFAE7E805740000</span>, <span class="number">0x55FA1E0FF3C3C9FF</span>,</span><br><span class="line">    <span class="number">0x4830EC8348E58948</span>, <span class="number">0x48D0758948D87D89</span>, <span class="number">0xE84589008BD8458B</span>, <span class="number">0x8904408BD8458B48</span>,</span><br><span class="line">    <span class="number">0xADBEEFF045C7EC45</span>, <span class="number">0xF3E800000000B8DE</span>, <span class="number">0x45C7F84589FFFFFB</span>, <span class="number">0xF445C700000072FC</span>,</span><br><span class="line">    <span class="number">0x000102E900000000</span>, <span class="number">0xF845AF0FF4458B00</span>, <span class="number">0x488DF4458BF04501</span>, <span class="number">0x67C06948C1634801</span>,</span><br><span class="line">    <span class="number">0x8920E8C148666666</span>, <span class="number">0x1FF8C1C889FAD1C2</span>, <span class="number">0x0102E0C1D089C229</span>, <span class="number">0xEC458BCA89C129D0</span>,</span><br><span class="line">    <span class="number">0x8B48C289E0D3D189</span>, <span class="number">0x008B08C08348D045</span>, <span class="number">0xF0452BEC458BC231</span>, <span class="number">0x83F4458BC631D689</span>,</span><br><span class="line">    <span class="number">0xEC558B07E08304C0</span>, <span class="number">0xD0458B48EAD3C189</span>, <span class="number">0x4501F031D031008B</span>, <span class="number">0x4802488DF4458BE8</span>,</span><br><span class="line">    <span class="number">0xAAAAABC06948C163</span>, <span class="number">0xC2894820E8C1482A</span>, <span class="number">0x89C2291FF8C1C889</span>, <span class="number">0x29C001D001C001D0</span>,</span><br><span class="line">    <span class="number">0xD189E8458BCA89C1</span>, <span class="number">0xD0458B48C289E0D3</span>, <span class="number">0xC231008B04C08348</span>, <span class="number">0xD689F0452BE8458B</span>,</span><br><span class="line">    <span class="number">0x03C083F4458BC631</span>, <span class="number">0x2493D26948D06348</span>, <span class="number">0xC20120EAC1489249</span>, <span class="number">0x1FF9C1C18902FAC1</span>,</span><br><span class="line">    <span class="number">0x2903E1C1D189CA29</span>, <span class="number">0xE8458BC289C829D1</span>, <span class="number">0x8B48C289E8D3D189</span>, <span class="number">0x008B0CC08348D045</span>,</span><br><span class="line">    <span class="number">0x83EC4501F031D031</span>, <span class="number">0x453BF4458B01F445</span>, <span class="number">0x48FFFFFEF2820FFC</span>, <span class="number">0x1089E8558BD8458B</span>,</span><br><span class="line">    <span class="number">0x04508D48D8458B48</span>, <span class="number">0xC3C9900289EC458B</span>, <span class="number">0xE5894855FA1E0FF3</span>, <span class="number">0x64000000C0EC8148</span>,</span><br><span class="line">    <span class="number">0x0000002825048B48</span>, <span class="number">0x85C7C031F8458948</span>, <span class="number">0xFFFFFFFFFFFFFF48</span>, <span class="number">0x74FFFFFFFF48BD83</span>,</span><br><span class="line">    <span class="number">0x00FFFFFF48BD8132</span>, <span class="number">0x48BD813974FFFF80</span>, <span class="number">0x77FFFF8000FFFFFF</span>, <span class="number">0x29FFFFFF48BD817B</span>,</span><br><span class="line">    <span class="number">0x48BD815A74973A72</span>, <span class="number">0x74FFF98000FFFFFF</span>, <span class="number">0x0028A305C761EB38</span>, <span class="number">0x48A5C11234567800</span>,</span><br><span class="line">    <span class="number">0x05C74EEB0FFFFFFF</span>, <span class="number">0x90ABCDEF00002894</span>, <span class="number">0xD089FFFFFF48958B</span>, <span class="number">0x0102E0C1D001C001</span>,</span><br><span class="line">    <span class="number">0xEBFFFFFF488589D0</span>, <span class="number">0x190000287505C72B</span>, <span class="number">0xFFFF48B581114514</span>, <span class="number">0xC715EB68C3F229FF</span>,</span><br><span class="line">    <span class="number">0x8101140000286305</span>, <span class="number">0x0CFFFFFF488D8119</span>, <span class="number">0xFF48BD81908D90E1</span>, <span class="number">0x05749FBAF32DFFFF</span>,</span><br><span class="line">    <span class="number">0x8D4890FFFFFF53E9</span>, <span class="number">0xC789480000081305</span>, <span class="number">0x458D48FFFFF86BE8</span>, <span class="number">0x0F058D48C68948C0</span>,</span><br><span class="line">    <span class="number">0x00B8C78948000008</span>, <span class="number">0xFFFFF8B0E8000000</span>, <span class="number">0xE8C78948C0458D48</span>, <span class="number">0xFF548589FFFFF854</span>,</span><br><span class="line">    <span class="number">0xFFFFFF54BD83FFFF</span>, <span class="number">0x07E5058D48197430</span>, <span class="number">0xF826E8C789480000</span>, <span class="number">0xE90001BF52B8FFFF</span>,</span><br><span class="line">    <span class="number">0x608D8D4800000133</span>, <span class="number">0xBAC0458D48FFFFFF</span>, <span class="number">0x48CE894800000030</span>, <span class="number">0xC7FFFFFA7CE8C789</span>,</span><br><span class="line">    <span class="number">0x000000FFFFFF4C85</span>, <span class="number">0xFFFF4C858B7AEB00</span>, <span class="number">0xFF6085848B9848FF</span>, <span class="number">0xFFFFFF588589FFFF</span>,</span><br><span class="line">    <span class="number">0xC083FFFFFF4C858B</span>, <span class="number">0xFF6085848B984801</span>, <span class="number">0xFFFFFF5C8589FFFF</span>, <span class="number">0x48FFFFFF58858D48</span>,</span><br><span class="line">    <span class="number">0x89480000277A158D</span>, <span class="number">0xFFFCEAE8C78948D6</span>, <span class="number">0x8BFFFFFF58958BFF</span>, <span class="number">0x899848FFFFFF4C85</span>,</span><br><span class="line">    <span class="number">0x858BFFFFFF608594</span>, <span class="number">0x8B01C083FFFFFF4C</span>, <span class="number">0x899848FFFFFF5C95</span>, <span class="number">0x8583FFFFFF608594</span>,</span><br><span class="line">    <span class="number">0x4CBD8302FFFFFF4C</span>, <span class="number">0xFF798E0F0BFFFFFF</span>, <span class="number">0x8D48904D8D48FFFF</span>, <span class="number">0x000CBAFFFFFF6085</span>,</span><br><span class="line">    <span class="number">0xC78948CE89480000</span>, <span class="number">0x5085C7FFFFFA96E8</span>, <span class="number">0xEB00000000FFFFFF</span>, <span class="number">0x48FFFFFF50858B41</span>,</span><br><span class="line">    <span class="number">0x858B900554B60F98</span>, <span class="number">0x8D489848FFFFFF50</span>, <span class="number">0x04B60F0000069B0D</span>, <span class="number">0x058D481674C23808</span>,</span><br><span class="line">    <span class="number">0xE8C78948000006E1</span>, <span class="number">0x01BF52B8FFFFF714</span>, <span class="number">0xFFFF50858324EB00</span>, <span class="number">0xFFFFFF50BD8301FF</span>,</span><br><span class="line">    <span class="number">0x06C7058D48B67E2F</span>, <span class="number">0xF6EEE8C789480000</span>, <span class="number">0x48001D4B42B8FFFF</span>, <span class="number">0x25142B4864F8558B</span>,</span><br><span class="line">    <span class="number">0xF5E8057400000028</span>, <span class="number">0x000000C3C9FFFFF6</span>, <span class="number">0x08EC8348FA1E0FF3</span>, <span class="number">0x000000C308C48348</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">int</span> v3 = <span class="number">0</span>; <span class="type">int</span> v4 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">0x8BD</span>; ++i) &#123;</span><br><span class="line">        v3+=i*((BYTE*)(start))[i];</span><br><span class="line">        v4 ^= ((BYTE*)(start))[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> v3 * (v4 ^ <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>rand 函数直接照抄就行：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">unsigned</span> <span class="type">int</span> <span class="title">t_rand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    rand_sand ^= rand_sand &lt;&lt; <span class="number">11</span>;</span><br><span class="line">    rand_sand ^= (<span class="type">unsigned</span> <span class="type">int</span>)rand_sand &gt;&gt; <span class="number">4</span>;</span><br><span class="line">    rand_sand ^= <span class="number">0x20</span> * rand_sand;</span><br><span class="line">    rand_sand ^= (<span class="type">unsigned</span> <span class="type">int</span>)rand_sand &gt;&gt; <span class="number">14</span>;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">unsigned</span> <span class="type">int</span>)rand_sand;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们根据主函数的逻辑逆向就可以了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    rand_sand = <span class="built_in">calc_sand</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> a1[<span class="number">12</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> buff[<span class="number">48</span>];</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> buff1[<span class="number">48</span>];</span><br><span class="line">    <span class="built_in">recover_mass_re</span>((_DWORD*)a1, enflag);</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> key[<span class="number">4</span>] = &#123; <span class="number">0x12345678</span>, <span class="number">0x90ABCDEF</span>, <span class="number">0x11451419</span>, <span class="number">0x19810114</span> &#125;;</span><br><span class="line">   </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i != <span class="number">4</span>; ++i) &#123;</span><br><span class="line">        key[i] ^= <span class="built_in">t_rand</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">0</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">2</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">4</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">6</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">8</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">    <span class="built_in">rand_tea_re</span>(&amp;a1[<span class="number">10</span>], key, <span class="built_in">t_rand</span>());</span><br><span class="line">  </span><br><span class="line">    <span class="built_in">make_mass_re</span>((<span class="type">char</span>*)buff1, a1);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>flag就是：flag{1_h4t3_h4sH_ch3cK1ng_4Nd_r4Nd0m_t3AenCRypt}</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/reverse/"># reverse</a>
+                    
+                        <a href="/tags/wp/"># wp</a>
+                    
+                        <a href="/tags/Newstar/"># Newstar</a>
+                    
+                        <a href="/tags/TEA%E5%8A%A0%E5%AF%86/"># TEA加密</a>
+                    
+                        <a href="/tags/%E5%8F%8D%E8%B0%83%E8%AF%95/"># 反调试</a>
+                    
+                        <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"># 多线程</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/CTF/38716dbccafa/">[ISCTF 2025] ez_tea</a>
+            
+            
+            <a class="next" rel="next" href="/CTF/8dd8209564bc/">[HDCTF2019] Maze WP</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
