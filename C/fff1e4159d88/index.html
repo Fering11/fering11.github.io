@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>C++ condition_variable 条件变量 | Fering11&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">C++ condition_variable 条件变量</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 8, 2026&nbsp;&nbsp;10:11:42</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/C/">C++</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>C++ 提供了<code>condition_variable</code>条件变量。标准使用模式是要配合<code>mutex</code>和<code>predicate</code>使用。</p>
+<p>核心要点：</p>
+<ul>
+<li><strong>等待方</strong>：拿着 <code>unique_lock&lt;mutex&gt;</code>，用 <code>cv.wait(lock, predicate)</code> 等待</li>
+<li><strong>通知方</strong>：先修改共享状态（同一把 mutex 保护），再 <code>notify_one/notify_all</code></li>
+<li><strong>永远用 predicate 或 while 循环</strong>防止“虚假唤醒”（spurious wakeup）</li>
+</ul>
+<h1 id="标准使用模式"><a href="#标准使用模式" class="headerlink" title="标准使用模式"></a>标准使用模式</h1><p>条件变量可以解决经典的 生产-消费 模型</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::mutex m;</span><br><span class="line">std::condition_variable cv;</span><br><span class="line">std::queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line"><span class="type">bool</span> done = <span class="literal">false</span>; <span class="comment">// 共享状态：是否结束</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 消费者线程</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 等到：队列非空 或 done 为 true</span></span><br><span class="line">        cv.<span class="built_in">wait</span>(lk, [] &#123; <span class="keyword">return</span> !q.<span class="built_in">empty</span>() || done; &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (done &amp;&amp; q.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="keyword">break</span>; <span class="comment">// 收尾：done 且没有任务了就退出</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> x = q.<span class="built_in">front</span>();</span><br><span class="line">        q.<span class="built_in">pop</span>();</span><br><span class="line"></span><br><span class="line">        lk.<span class="built_in">unlock</span>(); <span class="comment">// 处理任务前解锁，减少锁占用时间（常见优化）</span></span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;consume &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生产者线程</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">producer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m)</span></span>;</span><br><span class="line">            q.<span class="built_in">push</span>(i);</span><br><span class="line">        &#125;</span><br><span class="line">        cv.<span class="built_in">notify_one</span>(); <span class="comment">// 通知有新数据了</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m)</span></span>;</span><br><span class="line">        done = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cv.<span class="built_in">notify_all</span>(); <span class="comment">// 通知所有等待者退出</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::thread <span class="title">t1</span><span class="params">(consumer)</span></span>;</span><br><span class="line">    <span class="function">std::thread <span class="title">t2</span><span class="params">(producer)</span></span>;</span><br><span class="line"></span><br><span class="line">    t<span class="number">2.</span><span class="built_in">join</span>();</span><br><span class="line">    t<span class="number">1.</span><span class="built_in">join</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="wait-函数"><a href="#wait-函数" class="headerlink" title="wait 函数"></a>wait 函数</h2><p>在调用wait函数之前，必须要把mutex上锁，否则无法执行后续的释放锁操作。</p>
+<p>例如，把设置智能锁的操作改成<code>std::unique_lock ulock(mt,std::defer_lock);</code>，这个有概率会拿到没有上锁的锁，进而导致在wait中报错。</p>
+<p><code>wait</code> 会做三件事（原子地配合条件变量）：</p>
+<ol>
+<li><strong>检查条件</strong>（后面的 lambda&#x2F;predicate）</li>
+<li>如果条件不满足：<ul>
+<li><strong><u>释放互斥锁</u></strong>** **<code>**lk**</code></li>
+<li>让线程<strong>睡眠等待通知</strong>（<code>notify_one/notify_all</code> 或者虚假唤醒）</li>
+</ul>
+</li>
+<li>被唤醒后：<ul>
+<li><strong><u>重新加锁 </u></strong><code>**lk**</code></li>
+<li><strong>再次检查条件</strong></li>
+<li>条件满足才返回，否则继续睡</li>
+</ul>
+</li>
+</ol>
+<p>wait函数的原型有</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">(unique_lock&lt;mutex&gt;&amp; _Lck)</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">(unique_lock&lt;mutex&gt;&amp; _Lck, _Predicate _Pred)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>常用第二个，第二个的实现方式就是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Predicate</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">(unique_lock&lt;mutex&gt;&amp; _Lck, _Predicate _Pred)</span> </span>&#123; <span class="comment">// wait for signal and test predicate</span></span><br><span class="line">    <span class="keyword">while</span> (!_Pred()) &#123;</span><br><span class="line">        <span class="built_in">wait</span>(_Lck);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>给定一个条件函数，防止出现虚假唤醒。</p>
+<p>wait函数还有其他类型，可以设置等待时间的，其用法和mutex的一致。</p>
+<h2 id="notify"><a href="#notify" class="headerlink" title="notify"></a>notify</h2><p>唤醒函数有两种：</p>
+<ul>
+<li><code>notify_one</code>随机唤醒一个线程</li>
+<li><code>notify_all</code>唤醒所有线程</li>
+</ul>
+<p>唤醒是指唤醒哪些调用<code>wait</code>函数后挂起的线程，具体使用哪个函数要根据代码设计。一般<code>notify_one</code>适合产生了一个任务需要处理，而<code>notify_all</code>适合当全部线程需要更改状态的情况。</p>
+<p>在上面的代码中，我们将<code>lock_guard</code>放在一对大括号内，这里使用了RAII机制，离开大括号自动解除锁，让调用<code>notify_one</code>之前解锁互斥锁， 即在线程觉醒前解锁互斥，算是微小的性能改进。</p>
+<blockquote>
+<p>需要注意的是，ontify_one 在操作系统上并不保证一定只唤醒一个线程，也有可能多个，这个就是伪唤醒</p>
+</blockquote>
+<h2 id="伪唤醒"><a href="#伪唤醒" class="headerlink" title="伪唤醒"></a>伪唤醒</h2><p>有些情况下，如果线程重新获得互斥，并且查验条件，而这一行为却不是直接响应线程乙的通知，这个就是<strong>伪唤醒</strong></p>
+<p>根据C++标准，这种伪唤醒出现的数量和频率都是不确定的，每次唤醒都会执行一次判断函数来检验条件，若这个判断函数有其他的副作用，那么不建议选择它来作为判断条件。（例如判断函数会提高线程优先级，多次意外唤醒会导致线程的优先级非常高）</p>
+<p>避免伪唤醒的办法就是添加测试循环，也就是上面<code>wait</code>函数第二种定义，内部实现就含有测试循环。</p>
+<h2 id="唤醒丢失"><a href="#唤醒丢失" class="headerlink" title="唤醒丢失"></a>唤醒丢失</h2><p>首先我们不能将条件变量的<code>notify_one</code>当成一个事件或者信号。</p>
+<p>唤醒丢失是在生产者线程<code>notify_one</code>时，消费者线程还没有进入<code>wait</code>函数进行等待，这个就会造成唤醒丢失。</p>
+<p>下面代码就会造成唤醒丢失：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">worker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;I started\n&quot;</span>);</span><br><span class="line">	std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">seconds</span>(<span class="number">10</span>));</span><br><span class="line">	<span class="function">std::unique_lock <span class="title">lock</span><span class="params">(mt)</span></span>;</span><br><span class="line">	cv.<span class="built_in">wait</span>(lock);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;I am wake up\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">maker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;I notify_one\n&quot;</span>);</span><br><span class="line">	cv.<span class="built_in">notify_one</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="function">std::jthread <span class="title">t1</span><span class="params">(maker)</span></span>;</span><br><span class="line">	<span class="function">std::jthread <span class="title">t2</span><span class="params">(worker)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种情况很难避免，但是我们可以通过一个谓词来进行判断生产者是否完成了生产。</p>
+<p>将<code>wait</code>那句改成	<code>cv.wait(lock, [&amp;]() {return done; });</code>即可。这样即使在<code>worker</code>在等待的10秒中出现了唤醒丢失，程序执行到<code>wait</code>时发现条件符合也会直接获取到锁。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E5%B9%B6%E5%8F%91/"># 并发</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/C/c2148e510432/">C++ future</a>
+            
+            
+            <a class="next" rel="next" href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
