@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>C++ 原子操作 | Fering11&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">C++ 原子操作</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 20, 2026&nbsp;&nbsp;21:33:01</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h1><p>原子(atomic)意为不可分割操作，在其他线程视角看来只有<strong>已完成</strong>或者<strong>未完成</strong>这两种状态，不存在<strong>完成中</strong>状态。</p>
+<p><font style="color:rgb(25, 27, 31);">它能够确保对共享变量的操作在执行时不会被其他线程的操作干扰，从而避免竞态条件（race condition）和死锁（deadlock）等问题</font></p>
+<p><font style="color:rgb(25, 27, 31);">C++ 标准库提供了</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;std::atomic&lt;T&gt;&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">类模板，可以定义一个任意类型的原子变量。不过根据不同编译器的实现方式，</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;atomic&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">有时候并不是无锁状态，我们可以通过</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;is_lock_free&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">这个成员函数来运行时判断这个原子对象是否为无锁结构。</font></p>
+<h2 id="atomic-flag"><a href="#atomic-flag" class="headerlink" title="atomic_flag"></a><font style="color:rgb(25, 27, 31);">atomic_flag</font></h2><p><code>atomic_flag</code>是C++中最简单的一个原子布尔类型，算是原子对象中最简单的一种类型。</p>
+<ul>
+<li><code>atomic_flag</code>可以通过<code>ATOMIC_FLAG_INIT</code>宏赋值进行初始化，默认是<strong>清除</strong>状态</li>
+<li><code>atomic_flag</code>提供了两个函数来测试和修改标志位，这两个操作都是原子的，可以保证在多线程的环境下正确执行<ul>
+<li><code>test_and_set</code> 返回目前的标志位，并且修改当前的标志位。例如本来是<code>false</code>，调用之后返回<code>false</code>并且自身变成<code>true</code></li>
+<li><code>clear</code>清除标志位，把自身修改为<code>false</code></li>
+</ul>
+</li>
+</ul>
+<p><code>std::atomic_flag</code> 只能表示两种状态，即 true 或 false，不能做其他比较操作。通常情况下，std::atomic_flag 被用作简单的互斥锁（可以用来实现自旋锁），而不是用来存储信息。</p>
+<h2 id="atomic"><a href="#atomic" class="headerlink" title="atomic"></a><font style="color:rgb(25, 27, 31);">atomic<bool></font></h2><p><code>atomic&lt;bool&gt;</code>与<code>atomic_flag</code>颇为相似，前者灵活度较高，接下来介绍一下如何操作。</p>
+<h3 id="store"><a href="#store" class="headerlink" title="store"></a>store</h3><p><code>store</code>成员函数实现了将特定的值存储到原子对象中。</p>
+<p>定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">store</span><span class="params">(T desired, std::memory_order order = std::memory_order_seq_cst)</span> <span class="keyword">volatile</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">store</span><span class="params">(T desired, std::memory_order order = std::memory_order_seq_cst)</span> <span class="keyword">noexcept</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>desired</code>要存储的值</li>
+<li><code>order</code>存储操作的内存顺序。</li>
+</ul>
+<h3 id="load"><a href="#load" class="headerlink" title="load"></a>load</h3><p><font style="color:rgb(25, 27, 31);">load函数用于获取原子变量的当前值。它有以下两种形式:</font></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">T <span class="title">load</span><span class="params">(memory_order order = memory_order_seq_cst)</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">operator</span> <span class="title">T</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="exchange"><a href="#exchange" class="headerlink" title="exchange"></a>exchange</h3><p><code>exchange</code>用于原子变量的交换操作，定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">_TVal <span class="title">exchange</span><span class="params">(<span class="type">const</span> _TVal _Value, <span class="type">const</span> memory_order _Order = memory_order_seq_cst)</span> <span class="keyword">noexcept</span></span></span><br></pre></td></tr></table></figure>
+
+<p>返回值为修改之前的值。</p>
+<h3 id="compare-exchange-weak和strong"><a href="#compare-exchange-weak和strong" class="headerlink" title="compare_exchange_weak和strong"></a><font style="color:rgb(25, 27, 31);">compare_exchange_weak和strong</font></h3><p><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;compare_exchange_weak&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">和</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;compare_exchange_strong&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">函数作用类似。</font></p>
+<p>如果原子当前值 &#x3D;&#x3D; expected，就把它改成 desired，并返回 true；否则把 expected 改成“实际读到的当前值”，返回 false。  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare_exchange_weak</span> <span class="params">(T&amp; expected, T val,memory_order sync = memory_order_seq_cst)</span> <span class="keyword">volatile</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare_exchange_weak</span> <span class="params">(T&amp; expected, T val,memory_order sync = memory_order_seq_cst)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare_exchange_weak</span> <span class="params">(T&amp; expected, T val,memory_order success, memory_order failure)</span> <span class="keyword">volatile</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare_exchange_weak</span> <span class="params">(T&amp; expected, T val,memory_order success, memory_order failure)</span> <span class="keyword">noexcept</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;expected&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">：期望值的地址，也是输入参数，表示要比较的值；（注意是引用）</font></li>
+<li><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;val&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">：新值，也是输入参数，表示期望值等于该值时需要替换的值；</font></li>
+<li><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;success&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">：表示函数执行成功时内存序的类型，默认为</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;memory_order_seq_cst&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">；</font></li>
+<li><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;failure&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">：表示函数执行失败时内存序的类型，默认为</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;memory_order_seq_cst&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">。</font></li>
+</ul>
+<p><font style="color:rgb(25, 27, 31);">该函数的返回值为</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;bool&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">类型，表示操作是否成功。</font></p>
+<p><font style="color:rgb(25, 27, 31);">注意，</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;compare_exchange_weak&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">函数是一个</font><strong><font style="color:rgb(25, 27, 31);">弱化版本</font></strong><font style="color:rgb(25, 27, 31);">的原子操作函数，因为在</font><strong><font style="color:rgb(25, 27, 31);">某些平台上</font></strong><font style="color:rgb(25, 27, 31);">它可能会失败（有可能值相等）。如果需要保证严格的原子性，则应该使用</font><code>&lt;font style=&quot;color:rgb(25, 27, 31);&quot;&gt;compare_exchange_strong&lt;/font&gt;</code><font style="color:rgb(25, 27, 31);">函数。</font></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::atomic&lt;<span class="type">bool</span>&gt; x&#123;<span class="literal">false</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> old = x.<span class="built_in">load</span>(std::memory_order_relaxed);</span><br><span class="line"><span class="keyword">while</span> (!x.<span class="built_in">compare_exchange_weak</span>(old, !old,</span><br><span class="line">                                std::memory_order_release,</span><br><span class="line">                                std::memory_order_relaxed)) &#123;</span><br><span class="line">    <span class="comment">// 失败时：old 自动被改成当前 x</span></span><br><span class="line">    <span class="comment">// 循环里用 !old 再试</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="atomic-1"><a href="#atomic-1" class="headerlink" title="atomic&lt;T*&gt;"></a>atomic&lt;T*&gt;</h2><p> 指向类型 T 的指针，其原子化形式为<code>std::atomic&lt;T*&gt;</code>，类似于原子化的布尔类型 <code>std::atomic&lt;bool&gt;</code>二者的接口相同。但是该原子对象提供了新操作<code>fecth_add</code>和<code>fetch_sub</code>，还有指针运算的符号重载+&#x3D;、-&#x3D;还有前后++与–。这些重载符号用起来的效果和内置类型一样。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> arr[<span class="number">5</span>] = &#123; <span class="literal">NULL</span> &#125;;</span><br><span class="line">atomic&lt;<span class="type">int</span>*&gt; pointer;</span><br><span class="line"></span><br><span class="line">pointer.<span class="built_in">store</span>(arr);</span><br><span class="line">pointer.<span class="built_in">fetch_add</span>(<span class="number">2</span>); <span class="comment">//arr[2]</span></span><br><span class="line">*pointer = <span class="number">12</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>fecth_add</code>和<code>fetch_sub</code>都是“读-改-写”操作，上面代码中，我们修改了指针指向了数组的第二项，<code>fetch_add(2)</code>会返回原来的指针。这种操作也叫做“交换相加”<code>exchange...</code></p>
+<p>我们可以在<code>fetch_add</code>和<code>fetch_sub</code>函数里指明内存次序，运算符重载的则不能。</p>
+<h2 id="atomic-2"><a href="#atomic-2" class="headerlink" title="atomic"></a>atomic<integer></h2><p> 在 std::atomic和 std::atomic这样的整数原子类型上，可以执行的操作颇为齐全：既包括常用的原子操作  <code>load()、store()、exchange()、compare_ exchange_weak() 和 compare_exchange_strong()</code>，也包括原子运算<code>fetch_add()、 fetch_sub()、fetch_and()、fetch_or()、fetch_xor()</code>，以及这些运算的复合赋值形式<code>(+=、 −=、&amp;=、|=和^=)</code>，还有前后缀形式的自增和自减<code>(++x、x++、−−x和x−−)</code>。相比普通整型的复合赋值操作，虽然整数原子类型上的相关操作尚不算全面，<strong>但已经近乎完整</strong>， 所缺少的重载运算符仅仅是<strong>乘除与位移</strong>。  </p>
+<p>上述操作的语义非常接近<code>std::atomic</code>类型的<code>fetch_add()</code>和<code>fetch_sub()</code>：具名函数按<strong>原子化</strong>方式执行操作，并返回原子对象的旧值，<strong>然而复合赋值运算符则返回新值。</strong> </p>
+<h2 id="泛化atomic类模板"><a href="#泛化atomic类模板" class="headerlink" title="泛化atomic&lt;&gt;类模板"></a>泛化atomic&lt;&gt;类模板</h2><p>除了上面所说的标准原子类型，我们还可以使用自定义类型U，其原子化类型就是<code>atomic&lt;U&gt;</code>，所提供的接口和<code>atomic&lt;bool&gt;</code>相同。</p>
+<p>不过对于类型U，<code>atomic</code>还是有限制的： 必须具备平实拷贝赋值操作符（trivial copy-assignment operator）， <strong>它不得含有任何虚函数</strong>，也不可以从虚基类派生得出，还必须由编译器代其隐式生成拷贝赋值操符；另外，若自定义类型具有<strong>基类或非静态数据成员</strong>，则它们同样必须具备 平实拷贝赋值操作符。这样赋值操作才能用<code>memcpy</code>等效完成。</p>
+<p>同时需要注意， <strong>比较-交换</strong>操作所采用的是<strong>逐位比较</strong>运算，效果等同于<code>memcmp</code>，假设用户类型自定义了比较运算符，在这项操作里面也会被省略。同时，因为等同于<code>memcmp</code>，如果用户定义的结构体中存在<strong>填充位</strong>，那么即使类型U的值相等，<code>memcmp</code>的结构却不一定相等，那么“比较-交换(CAS)”操作还是会失败。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">S</span> &#123;</span><br><span class="line">  <span class="type">char</span> c;   <span class="comment">// 1 字节</span></span><br><span class="line">  <span class="type">int</span>  i;   <span class="comment">// 通常需要 4 字节对齐</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 在很多平台上：sizeof(S) == 8</span></span><br><span class="line"><span class="comment">// c 占 1 字节 + 后面有 3 字节 padding + i 占 4 字节</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>padding <strong>不属于任何成员的值</strong>；</li>
+<li>它们的内容可能是<strong>未指定&#x2F;不稳定的</strong>（例如你只给 <code>c</code>、<code>i</code> 赋值，并不一定会把 padding 清零）。</li>
+</ul>
+<p>对于8字节或者4字节的自定义结构体，编译器往往能够为其生成无锁结构。反之，则会通过互斥锁实现原子操作。</p>
+<p>在MSVC源码中我们可以进行观察。对于结构体：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">myStruct</span> &#123;</span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="type">int</span> b;</span><br><span class="line">	<span class="type">int</span> c;</span><br><span class="line">&#125;;</span><br><span class="line">atomic&lt;myStruct&gt; dbat; <span class="comment">//12字节</span></span><br><span class="line">dbat.<span class="built_in">exchange</span>(&#123;&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>load函数内部其实是使用了自旋锁来实现原子操作。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">_NODISCARD _TVal <span class="title">load</span><span class="params">(<span class="type">const</span> memory_order _Order = memory_order_seq_cst)</span> <span class="type">const</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">    <span class="comment">// load with sequential consistency</span></span><br><span class="line">    _Check_load_memory_order(_Order);</span><br><span class="line">    _Guard _Lock&#123;_Spinlock&#125;; <span class="comment">//自旋互斥锁</span></span><br><span class="line">    _TVal _Local(_Storage);</span><br><span class="line">    <span class="keyword">return</span> _Local;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>各原子类型上可执行的操作</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>atomic_flag</th>
+<th>atomic<bool></th>
+<th>atomic&lt;T*&gt;</th>
+<th>整数原子类型</th>
+<th>其他原子类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>test_and_set</td>
+<td>Y</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>clear</td>
+<td>Y</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>is_lock_free</td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>load</td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>store</td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>exchange</td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>compare_exchange_weak, compare_exchange_strong</td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>fetch_add, +&#x3D;</td>
+<td></td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>fetch_sub, -&#x3D;</td>
+<td></td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>fetch_or,</td>
+<td>&#x3D;</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Y</td>
+</tr>
+<tr>
+<td>fetch_and, &amp;&#x3D;</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>fetch_xor, ^&#x3D;</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>++, –</td>
+<td></td>
+<td></td>
+<td>Y</td>
+<td>Y</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="原子化访问shared-ptr"><a href="#原子化访问shared-ptr" class="headerlink" title="原子化访问shared_ptr&lt;&gt;"></a>原子化访问shared_ptr&lt;&gt;</h2><p> C++标准库还提供了非成员函数，按原子化形式访问<code>std::shared_ptr&lt;&gt;</code>的实例。虽然在原则上，只有原子类型才支持原子操作，<code>std::shared_ptr&lt;&gt;</code>并不属于原子类型。但是C++标准会认为这个很有必要，因此添加了原子操作的非成员函数。在C++20中，直接添加了<code>std::atomic&lt;std::shared_ptr&lt;T&gt;&gt;</code>的特化版本。</p>
+<p><code>std::shared_ptr&lt;&gt;</code>内部的引用计数更新本身是线程安全的，但是对于同一个<code>std::shared_ptr&lt;&gt;</code>被多个线程同时读写时不安全的。C++ 提供了<code>atomic_</code>开头的一系列全局函数，用于操作原子对象，例如<code>atomic_load</code>，其定义有 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">shared_ptr&lt;_Ty&gt; <span class="title">atomic_load</span><span class="params">(<span class="type">const</span> shared_ptr&lt;_Ty&gt;* _Ptr)</span> </span>;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_Ty <span class="title">atomic_load</span><span class="params">(<span class="type">const</span> atomic&lt;_Ty&gt;* <span class="type">const</span> _Mem)</span> <span class="keyword">noexcept</span></span>;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_Ty <span class="title">atomic_load</span><span class="params">(<span class="type">const</span> <span class="keyword">volatile</span> atomic&lt;_Ty&gt;* <span class="type">const</span> _Mem)</span> <span class="keyword">noexcept</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以发现有<code>shared_ptr&lt;&gt;</code>的重载版本。同时，函数的参数都是指针类型，这个是C++规定，要求函数能够兼容C语言标准。</p>
+<p>我们也可以调用带有<code>explicit</code>的函数版本，这个函数版本能够指明内存次序。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E5%B9%B6%E5%8F%91/"># 并发</a>
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/uncategorized/2a13fe0d6875/">C++ 对move_only_function的简单研究</a>
+            
+            
+            <a class="next" rel="next" href="/uncategorized/d47b9e6a2ee2/">C++ 内存序</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

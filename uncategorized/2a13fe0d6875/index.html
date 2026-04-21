@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>C++ 对move_only_function的简单研究 | Fering11&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">C++ 对move_only_function的简单研究</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 29, 2026&nbsp;&nbsp;6:53:27</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p><code>move_only_function</code>是C++23引入的类型擦除容器，它与<code>function</code>最大的不同就是前者可以移动<code>move</code>，具有更好的效率。</p>
+<h1 id="源码深究-MSVC"><a href="#源码深究-MSVC" class="headerlink" title="源码深究(MSVC)"></a>源码深究(MSVC)</h1><p>在STL里面，<code>move_only_function</code>有三层架构设计：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">move_only_function</span> (用户接口层)</span><br><span class="line">    ↓</span><br><span class="line">_Move_only_function_call (调用语义层)</span><br><span class="line">    ↓</span><br><span class="line">_Move_only_function_base (存储和管理层)</span><br></pre></td></tr></table></figure>
+
+<p><code>move_only_function</code>用户层，这也是我们使用时候直接用到的</p>
+<p><code>_Move_only_function_call</code>中间层，这一层处理了<code>noexcept</code>和<code>const</code>还有<code>&amp;|&amp;&amp;</code>修饰符，因此支持<code>move_only_function&lt;void()const noexcept&gt;</code>这样的写法</p>
+<p><code>_Move_only_function_base</code>底层，负责底层的内存管理，调用分发。</p>
+<h2 id="手搓虚函数表"><a href="#手搓虚函数表" class="headerlink" title="手搓虚函数表"></a>手搓虚函数表</h2><p><code>move_only_function</code>手搓了一个类似于虚函数表的东西，具体结构是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">bool</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_Invoke_t</span> &#123;</span><br><span class="line">    <span class="keyword">using</span> _Call = _Rx(__stdcall*)(<span class="type">const</span> _Move_only_function_data&amp;, _Types&amp;&amp;...);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_Invoke_t</span>&lt;<span class="literal">true</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">using</span> _Call = _Rx(__stdcall*)(<span class="type">const</span> _Move_only_function_data&amp;, _Types&amp;&amp;...) _NOEXCEPT_FNPTR;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_Impl_t</span> &#123;</span><br><span class="line">    _Invoke_t&lt;_Noexcept&gt;::_Call _Invoke;</span><br><span class="line">    <span class="built_in">void</span>(__stdcall* _Move)(_Move_only_function_data&amp;, _Move_only_function_data&amp;) _NOEXCEPT_FNPTR;</span><br><span class="line">    <span class="built_in">void</span>(__stdcall* _Destroy)(_Move_only_function_data&amp;) _NOEXCEPT_FNPTR;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这3个成员都是函数指针，对于不同的函数大小设置不同的函数。</p>
+<p><code>_Invoke_t&lt;_Noexcept&gt;</code>根据是否为<code>noexcept</code>特化不同的函数版本。只看这个代码可能看不出为什么手搓一个虚函数表，我们用虚函数表实现一下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传统虚函数方式（简化版）</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">Rx</span>, <span class="keyword">class</span>... Types&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">move_only_function_traditional</span> &#123;</span><br><span class="line">    <span class="comment">// 抽象基类</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">CallableBase</span> &#123;</span><br><span class="line">        <span class="keyword">virtual</span> ~<span class="built_in">CallableBase</span>() = <span class="keyword">default</span>;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> Rx <span class="title">invoke</span><span class="params">(Types... args)</span> </span>= <span class="number">0</span>;</span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">move_to</span><span class="params">(<span class="type">void</span>* dest)</span> </span>= <span class="number">0</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 每个具体类型都需要一个派生类</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">Callable</span>&gt;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">CallableImpl</span> : CallableBase &#123;</span><br><span class="line">        Callable func;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">CallableImpl</span>(Callable f) : <span class="built_in">func</span>(std::<span class="built_in">move</span>(f)) &#123;&#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function">Rx <span class="title">invoke</span><span class="params">(Types... args)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">func</span>(std::forward&lt;Types&gt;(args)...);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">move_to</span><span class="params">(<span class="type">void</span>* dest)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">            <span class="keyword">new</span> (dest) <span class="built_in">CallableImpl</span>(std::<span class="built_in">move</span>(func));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    CallableBase* ptr;  <span class="comment">// 必须用指针，无法内联存储</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>用C++自身的虚函数实现是相当简明的，对于不同类型，实例化不同的<code>CallableImpl</code>，在抽象基类<code>CallableBase</code>调用的<code>invoke</code>和<code>move_to</code>是<code>CallableImpl</code>里面的，这里也是实现了类型擦除。不过，MSVC采用手搓虚函数表还是有其道理的：</p>
+<ul>
+<li>减少RTTI数据，如果使用<code>virtual</code>的类，编译器会为其生成<code>RTTI</code>数据，还有<code>type_info</code>，<code>dynamic_cast</code>等，还有虚函数表。对于每一个lambda，编译器会解析为不同的类型；如果lambda的数量多起来，RTTI数据会非常庞大。</li>
+<li>对<code>trivial</code>类型优化，如果是<code>trivial</code>类型，手动虚函数表可以将函数设置为<code>nullptr</code>，无需再实例化一个<code>CallableImpl</code>。</li>
+<li>为调用dll函数提供安全保障。</li>
+<li>实现内联存储，一般的类型擦除，都会采用<code>void*</code>在堆上开辟新空间，手搓虚函数表的方式可以实现<strong>内联存储</strong>，这也是接下来要讲解的部分。</li>
+</ul>
+<h2 id="小对象优化"><a href="#小对象优化" class="headerlink" title="小对象优化"></a>小对象优化</h2><p>小对象优化（SBO - Small Buffer Optimization）是<code>move_only_function</code>实现非常巧妙的一个部分。在MSVC中，用于存储函数的对象是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="title class_">_Move_only_function_data</span> &#123;</span><br><span class="line">    <span class="type">void</span>* _Pointers[_Small_object_num_ptrs];</span><br><span class="line">    <span class="type">const</span> <span class="type">void</span>* _Impl;</span><br><span class="line">    <span class="type">char</span> _Data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>对于小的对象，<code>move_only_function</code>会将其直接存储到栈空间上（内联存储），如果是大对象，那么会使用<code>new</code>开辟堆空间存放。使用栈空间内联存储。</p>
+<p>对于上面的结构，<code>move_only_function</code>存储方式是这样的（这里假设<code>_Small_object_num_ptrs=4</code>，指针大小为8字节）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里假设alignas = 4</span></span><br><span class="line"><span class="comment">// +--------+--------+--------+--------+--------+--------+--------+--------+</span></span><br><span class="line"><span class="comment">// | _Impl  |  可用缓冲区（24 字节）                                        |</span></span><br><span class="line"><span class="comment">// | 8 字节 |                                                              |</span></span><br><span class="line"><span class="comment">// +--------+--------+--------+--------+--------+--------+--------+--------+</span></span><br><span class="line"><span class="comment">// _Buf_offset = 8</span></span><br><span class="line"><span class="comment">// _Buf_size = 32 - 8 = 24 字节</span></span><br></pre></td></tr></table></figure>
+
+<p>一开始看到可能会有点疑惑，明明<code>_Impl_t</code>有3个函数指针，大小应该是24字节，这个我们先留着，后面再解释。</p>
+<p>判断是否可以内联存储的有3个条件：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Vt</span>&gt;</span><br><span class="line"><span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">bool</span> _Large_function_engaged = </span><br><span class="line">    <span class="built_in">alignof</span>(_Vt) &gt; <span class="built_in">alignof</span>(<span class="type">max_align_t</span>)</span><br><span class="line">    || <span class="built_in">sizeof</span>(_Vt) &gt; _Move_only_function_data::_Buf_size&lt;_Vt&gt;</span><br><span class="line">    || !is_nothrow_move_constructible_v&lt;_Vt&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>从上到下依次是：</p>
+<ul>
+<li>对齐要求</li>
+<li>大小要求</li>
+<li>移动异常安全性</li>
+</ul>
+<h3 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h3><p>这里先补充一下关于内存对齐的知识。内存对齐算是平时写C++感知不强，但是在底层开发与性能优化时是绝对绕不开的话题。</p>
+<p> 在我们的直觉里，内存就像一个连续的字节数组，CPU 可以随意从任意地址读取任意大小的数据。<strong>但实际上并非如此。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">|-------------------------------|</span><br><span class="line">|	1	|	2	|	3	|	4	|	5	|	6	|	7	|	8	|</span><br><span class="line">|-------------------------------|</span><br><span class="line">|0x0														|0x8</span><br></pre></td></tr></table></figure>
+
+<p> 为了硬件层面的高效率，CPU 读取内存是 <strong>按块（Chunks）</strong> 读取的（比如每次读 4 字节、8 字节或 16 字节）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">|---------------|---------------|---------------|</span><br><span class="line">|	1	|	2	|	3	|	4	|	1	|	2	|	3	|	4	|	1	|	2	|	3	|	4	|</span><br><span class="line">|---------------|---------------|---------------|</span><br><span class="line">|0x0						|0x4						|0x8</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>对齐的内存：</strong> 如果一个 4 字节的 <code>int</code> 刚好放在地址为 4 的倍数（0, 4, 8, 12…）的地方，CPU 一次内存读取就能把它完整拿出来。</li>
+<li><strong>不对齐的内存：</strong> 如果这个 <code>int</code> 存放在了地址为 1 的地方（跨越了块的边界），CPU 可能需要读取两次内存，然后通过内部的位移指令拼接出这个数据。这会导致<strong>严重的性能惩罚</strong>。在某些架构（如早期的 ARM）上，读取未对齐的内存甚至会直接触发硬件异常导致程序<strong>崩溃</strong>。</li>
+</ul>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61141865/1773717217666-724973c5-697f-49e4-a162-376c2722360f.png"></p>
+<p>因此，C++编译器会为每一种数据类型规定一个对齐要求，<code>int</code>是4字节对齐，<code>double</code>为8字节对齐。我们可以手动指明对齐大小：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">alignas</span>(<span class="number">16</span>) Align16&#123;</span><br><span class="line">    <span class="type">char</span> b;</span><br><span class="line">    <span class="type">int</span> x;</span><br><span class="line">&#125;  <span class="comment">//这个数据结构大小为16</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>回到<code>move_only_function</code>的实现上来，C++中的<code>max_align_t</code>通常对齐到16字节，如果类型对其要求更加严格，例如 <code>AVX-512</code>需要64字节对齐（这种属于 <strong>过度对齐类型</strong> over-aligned type），那么就需要堆分配，栈上的缓冲区无法保证这种对齐。</p>
+<p>在C++17之后，若类型没有实现专属的<code>operator new</code>（如果实现了，但是支持<strong>对齐感知</strong>），<code>new</code>返回的地址满足<code>alignof(T)</code>的对齐要求。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">    <span class="type">void</span>* _Ptr;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cpp_aligned_new <span class="comment">//C++17标准</span></span></span><br><span class="line">    <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(<span class="keyword">alignof</span>(_Vt) &gt; __STDCPP_DEFAULT_NEW_ALIGNMENT__)</span> </span>&#123; <span class="comment">//宏的值一般是16</span></span><br><span class="line">        _Ptr = ::<span class="keyword">operator</span> <span class="built_in">new</span>(<span class="built_in">sizeof</span>(_Vt), <span class="type">align_val_t</span>&#123;<span class="built_in">alignof</span>(_Vt)&#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// defined(__cpp_aligned_new)</span></span></span><br><span class="line">    &#123;</span><br><span class="line">        _Ptr = ::<span class="keyword">operator</span> <span class="built_in">new</span>(<span class="built_in">sizeof</span>(_Vt));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="大小要求"><a href="#大小要求" class="headerlink" title="大小要求"></a>大小要求</h3><p>这个条件很好理解，如果栈空间塞不下去，那么就需要在堆中申请空间。</p>
+<p>在<code>_Move_only_function_data</code>联合体对象里，实现了一些模板变量，用于计算可用的空间</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// _Buf_size 计算可用缓冲区大小</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fn</span>&gt;</span><br><span class="line"><span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">size_t</span> _Buf_size = <span class="built_in">sizeof</span>(_Pointers) - _Buf_offset&lt;_Fn&gt;;</span><br><span class="line"><span class="comment">//                                  ↑                    ↑</span></span><br><span class="line"><span class="comment">//                                  总大小               减去前面的偏移</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// _Buf_offset 计算存储位置的偏移</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Fn</span>&gt;</span><br><span class="line"><span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">size_t</span> _Buf_offset =</span><br><span class="line">    <span class="built_in">alignof</span>(_Fn) &lt;= <span class="built_in">sizeof</span>(_Impl) ? <span class="built_in">sizeof</span>(_Impl)  <span class="comment">// 小对齐：紧跟 _Impl</span></span><br><span class="line">                                  : <span class="built_in">alignof</span>(_Fn);   <span class="comment">// 大对齐：需要填充</span></span><br></pre></td></tr></table></figure>
+
+<p>这里有两种内存对齐情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 假设 _Small_object_num_ptrs = 4，每个指针 8 字节，总共 32 字节</span><br><span class="line"></span><br><span class="line">// 情况 A：小对齐的类型（alignof = 4）</span><br><span class="line">// +--------+--------+--------+--------+--------+--------+--------+--------+</span><br><span class="line">// | _Impl  |  可用缓冲区（24 字节）                                        |</span><br><span class="line">// | 8 字节 |                                                              |</span><br><span class="line">// +--------+--------+--------+--------+--------+--------+--------+--------+</span><br><span class="line">// _Buf_offset = 8</span><br><span class="line">// _Buf_size = 32 - 8 = 24 字节</span><br><span class="line"></span><br><span class="line">// 情况 B：大对齐的类型（alignof = 16）</span><br><span class="line">// +--------+--------+--------+--------+--------+--------+--------+--------+</span><br><span class="line">// | _Impl  | padding|  可用缓冲区（16 字节）                               |</span><br><span class="line">// | 8 字节 | 8 字节 |                                                     |</span><br><span class="line">// +--------+--------+--------+--------+--------+--------+--------+--------+</span><br><span class="line">// _Buf_offset = 16（需要对齐到 16）</span><br><span class="line">// _Buf_size = 32 - 16 = 16 字节</span><br></pre></td></tr></table></figure>
+
+<p>更大的对齐类型就放在堆里面了</p>
+<h3 id="移动异常安全"><a href="#移动异常安全" class="headerlink" title="移动异常安全"></a>移动异常安全</h3><p>C++标准要求<code>move_only_function</code>必须是移动无异常。如果对象的移动函数并非<code>noexcept</code>，那么就只能采用堆构造。堆构造的移动并不会调用对象的移动构造函数，栈构造的对象需要移动则必须使用对象的移动构造函数，如果并不是<code>noexcept</code>，则与标准要求的相互违背。</p>
+<h2 id="构造时的路径选择"><a href="#构造时的路径选择" class="headerlink" title="构造时的路径选择"></a>构造时的路径选择</h2><p>构造从这个函数开始，这个函数在<code>move_only_function</code>构造函数中被调用。这里根据是否适合在栈中构造做了路径选择。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Vt</span>, <span class="keyword">class</span> <span class="title class_">_VtInvQuals</span>, <span class="keyword">class</span>... _CTypes&gt;</span><br><span class="line"><span class="type">void</span> _Construct_with_fn(_CTypes&amp;&amp;... _Args) &#123;</span><br><span class="line">    _Data._Impl = _Create_impl_ptr&lt;_Vt, _VtInvQuals&gt;();<span class="comment">//这里_Data就是_Move_only_function_data</span></span><br><span class="line">    <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(_Large_function_engaged&lt;_Vt&gt;)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//堆中构造</span></span><br><span class="line">        _Data._Set_large_fn_ptr(_STD _Function_new_large&lt;_Vt&gt;(_STD forward&lt;_CTypes&gt;(_Args)...));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//栈中构造</span></span><br><span class="line">        ::<span class="built_in">new</span> (_Data._Buf_ptr&lt;_Vt&gt;()) _Vt(_STD forward&lt;_CTypes&gt;(_Args)...);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来看<code>_Create_impl_ptr</code>，这个函数创建了一个静态常量，用来存放虚表，生命周期和程序一样长。这样对于相同类型的函数对象，虚表都是同一份，这个和C++多态实现虚表是同样的操作。因此，上面<code>_Impl_t</code>有24字节，可是Data里面只留了8字节的原因就是Data里面存储的是<code>_Impl_t</code>全局静态对象的指针，避免了每一个实例对象都一份，节约了内存空间。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Vt</span>, <span class="keyword">class</span> <span class="title class_">_VtInvQuals</span>&gt;</span><br><span class="line">_NODISCARD <span class="type">static</span> <span class="type">const</span> _Impl_t* _Create_impl_ptr() <span class="keyword">noexcept</span> &#123;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> _Impl_t _Impl = _Create_impl&lt;_Vt, _VtInvQuals&gt;();</span><br><span class="line">    <span class="keyword">return</span> &amp;_Impl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>里面的<code>_Create_impl</code>是构造虚表的函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Vt</span>, <span class="keyword">class</span> <span class="title class_">_VtInvQuals</span>&gt;</span><br><span class="line">_NODISCARD <span class="type">static</span> <span class="keyword">constexpr</span> _Impl_t _Create_impl() <span class="keyword">noexcept</span> &#123;</span><br><span class="line">    _Impl_t _Impl&#123;&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// === 第一层分支：大对象 vs 小对象 ===</span></span><br><span class="line">    <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(_Large_function_engaged&lt;_Vt&gt;)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 大对象路径</span></span><br><span class="line">        _Impl._Invoke = _Function_inv_large&lt;_Vt, _VtInvQuals, _Rx, _Noexcept, _Types...&gt;;</span><br><span class="line">        _Impl._Move = <span class="literal">nullptr</span>;  <span class="comment">// 大对象移动很简单，直接复制指针</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// === 第二层分支：析构优化 ===</span></span><br><span class="line">        <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_trivially_destructible_v&lt;_Vt&gt;)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Trivial 析构：只需要释放内存</span></span><br><span class="line">            <span class="comment">// 同时，如果是过度对齐类型，则采用特化的delete(C++17引入)</span></span><br><span class="line">            <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(<span class="keyword">alignof</span>(_Vt) &lt;= __STDCPP_DEFAULT_NEW_ALIGNMENT__)</span> </span>&#123;</span><br><span class="line">                _Impl._Destroy = _Function_deallocate_large_default_aligned;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                _Impl._Destroy = _Function_deallocate_large_overaligned&lt;<span class="built_in">alignof</span>(_Vt)&gt;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 非 Trivial 析构：需要调用析构函数</span></span><br><span class="line">            _Impl._Destroy = _Function_destroy_large&lt;_Vt&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 小对象路径</span></span><br><span class="line">        _Impl._Invoke = _Function_inv_small&lt;_Vt, _VtInvQuals, _Rx, _Noexcept, _Types...&gt;;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// === 第三层分支：移动优化 ===</span></span><br><span class="line">        <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_trivially_copyable_v&lt;_Vt&gt; &amp;&amp; is_trivially_destructible_v&lt;_Vt&gt;)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Trivially copyable：可以用 memcpy</span></span><br><span class="line">            <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">((_Function_small_copy_size&lt;_Vt&gt;) &gt; _Minimum_function_size)</span> </span>&#123;</span><br><span class="line">                _Impl._Move = _Function_move_memcpy&lt;_Function_small_copy_size&lt;_Vt&gt;&gt;;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                _Impl._Move = <span class="literal">nullptr</span>;  <span class="comment">// 太小了，直接复制指针更快</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 需要调用移动构造函数</span></span><br><span class="line">            _Impl._Move = _Function_move_small&lt;_Vt&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// === 第四层分支：析构优化 ===</span></span><br><span class="line">        <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_trivially_destructible_v&lt;_Vt&gt;)</span> </span>&#123;</span><br><span class="line">            _Impl._Destroy = <span class="literal">nullptr</span>;  <span class="comment">// 无需析构</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            _Impl._Destroy = _Function_destroy_small&lt;_Vt&gt;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> _Impl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>对于<code>_Move</code>和<code>_Destory</code>指针，非空则调用；如果为空，<code>_Move</code>直接复制指针，<code>_Destory</code>则不做任何处理。</p>
+<p><code>_Destory</code>调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> _Checked_destroy(_Move_only_function_data&amp; _Data) <span class="keyword">noexcept</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="keyword">auto</span> _Impl = _Get_impl(_Data);</span><br><span class="line">    <span class="keyword">if</span> (_Impl-&gt;_Destroy) &#123;</span><br><span class="line">        _Impl-&gt;_Destroy(_Data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>_Move</code>调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> _Checked_move</span><br><span class="line">    (_Move_only_function_data&amp; _Data, _Move_only_function_data&amp; _Src) <span class="keyword">noexcept</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="keyword">auto</span> _Impl = _Get_impl(_Src);</span><br><span class="line">    <span class="keyword">if</span> (_Impl-&gt;_Move) &#123;</span><br><span class="line">        _Impl-&gt;_Move(_Data, _Src);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        _Function_move_large(_Data, _Src);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="手搓一个"><a href="#手搓一个" class="headerlink" title="手搓一个"></a>手搓一个</h1><p>由于写线程池需要，因此手搓一个move only function。代码其实很多都是参考MSVC STL里面的，包括设计也是。</p>
+<h2 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h2><p>写一个高<font style="color:#8A8F8D;">（低）</font>性能库，首先是要设计好。这个工程命令为<code>mfunction</code>。设计图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mfunction&lt;Sign...&gt;</span><br><span class="line">    |</span><br><span class="line">    |</span><br><span class="line">call layer</span><br><span class="line">    -	operator()</span><br><span class="line">    -	限定符的适配</span><br><span class="line">    |</span><br><span class="line">base layer</span><br><span class="line">    - 构造虚表</span><br><span class="line">    - 构造SBO与堆</span><br><span class="line">    - 移动与交换</span><br><span class="line">    |</span><br><span class="line">data pack</span><br><span class="line">    - 包含虚表和SBO缓存区</span><br></pre></td></tr></table></figure>
+
+<p>对象存储函数会分为两种情况，一种是堆中，另一种是在栈中。同时，如果初始化没有给任何函数，那么就是空状态。</p>
+<ul>
+<li><strong>Empty</strong> ： 空状态 vtab &#x3D; nullptr</li>
+<li><strong>Stack</strong> : 栈中 vtab存在，storage 内部保存了可调用对象</li>
+<li><strong>Heap</strong>: 堆中 vtab存在，storage 内部保存了可调用对象地址</li>
+</ul>
+<h3 id="Base层状态机"><a href="#Base层状态机" class="headerlink" title="Base层状态机"></a>Base层状态机</h3><p>考虑一种状态机，在base层</p>
+<p><code>construct</code>函数，构造虚表和缓存对象</p>
+<ul>
+<li>成功，vtab和stroage都有效</li>
+<li>失败，保持empty</li>
+</ul>
+<p><code>destory</code>销毁自身</p>
+<ul>
+<li>如果虚表存在，那么调用销毁函数，并且重置虚表</li>
+<li>虚表不存在，空对象，不处理</li>
+</ul>
+<p><code>move_from</code>：只是将<code>other</code>移动到自身，但是不考虑自身是否有对象。被转移的对象就是空对象</p>
+<ul>
+<li>如果自身为空，原地构建。如果other为空，清空自己</li>
+<li>如果非空，那么就是<strong>UB</strong></li>
+</ul>
+<blockquote>
+<p>这里我们需要处理好 <code>base::move_from</code>和虚表的<code>_Move</code>，虚表<code>_Move</code>处理的是缓存对象的移动。</p>
+</blockquote>
+<p><code>assign</code>：<code>move_from</code>升级版本</p>
+<ul>
+<li>如果自身为空，走<code>move_from</code></li>
+<li>非空，先销毁自身，再走<code>move_from</code></li>
+</ul>
+<p>各种模板参数名称：</p>
+<ul>
+<li><code>_Fx</code> 函数类型</li>
+<li><code>_Sign...</code> 类型包，用于最顶层，再使用<code>caller</code>进行萃取</li>
+<li><code>_Rx</code> 返回值</li>
+<li><code>_Ax...</code>参数类型包</li>
+<li><code>_Dx</code> 函数类型的退化<code>std::decay_t&lt;_Fx&gt;</code></li>
+<li><code>_OrDx</code> 加上限定符的函数类型，需要通过<code>caller</code>层的<code>_Origial&lt;_Dx&gt;</code>获取</li>
+</ul>
+<h3 id="斩杀线"><a href="#斩杀线" class="headerlink" title="斩杀线"></a>斩杀线</h3><p>到底是在栈中内联存储还是走堆分配的路线，通过一个模板变量来判断。栈中内联存储有以下要求：</p>
+<ul>
+<li>对齐，超过<code>max_align_t</code>不能内联存储</li>
+<li>对象大小，超过设定值不能内联存储</li>
+</ul>
+<p>其实也可以再加一条，保证移动构造函数noexcept，这个不强求，添加了需要修改虚表的<code>_Move</code>noexcept属性。</p>
+<h3 id="缓存对象"><a href="#缓存对象" class="headerlink" title="缓存对象"></a>缓存对象</h3><p>针对小对象的优化，避免堆分配消耗过多时间。缓存大小可以设置，默认就是4*8 &#x3D; 32 Bytes，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">union</span> <span class="title">alignas</span><span class="params">(std::<span class="type">max_align_t</span>)</span> _SBO_Storage</span>&#123;</span><br><span class="line">    <span class="type">void</span>* ptr[<span class="number">4</span>];</span><br><span class="line">    <span class="type">char</span> data;</span><br><span class="line">&#125;storage;</span><br></pre></td></tr></table></figure>
+
+<p>设计联合体加个<code>char</code>主要是为了方便取地址。</p>
+<p>处于<code>empty</code>状态时，里面的值是不确定的。</p>
+<p>处于<code>stack</code>时，<code>ptr</code>数组里面存储的就是<strong>可调用对象</strong>，通过<code>&amp;data</code>获取到函数地址。</p>
+<p>处于<code>heap</code>时，<code>ptr</code>数组的第一个元素存储的是可调用对象<strong>地址</strong>，通过<code>ptr[0]</code>获取。</p>
+<p><code>_SBO_Storage</code>只处理最底层的数据表示：</p>
+<ul>
+<li><code>set_heap_ptr</code> 设置<u>堆</u>存储的地址</li>
+<li><code>heap_ptr</code>获取<u>堆</u>存储的地址</li>
+<li><code>stack_ptr</code>获取<u>栈</u>存储的地址</li>
+</ul>
+<p>上述的3个函数都是函数模板，需要传入具体的函数类型<code>_Dx</code>。栈中内联需要外部自行构建。</p>
+<h3 id="模拟虚表"><a href="#模拟虚表" class="headerlink" title="模拟虚表"></a>模拟虚表</h3><p>参考了STL的设计，我们写成<code>_Invoke</code>,<code>_Move</code>,<code>_Destory</code>三种。根据不同的<code>_Dx</code>(<code>std::decay_t&lt;_Fx&gt;</code>)，我们生成不同的虚表，生成虚表需要最原始的<code>_Rx(_Ax...)</code>模板。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>,<span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">    _Rx(*_Invoke)(SBO&amp;,_Ax&amp;&amp;...);<span class="comment">//这里noexcept需要从call layer中萃取</span></span><br><span class="line">    <span class="built_in">void</span>(*_Move)(SBO&amp;,SBO&amp;); <span class="comment">//dest,src 这里不一定noexcept，</span></span><br><span class="line">    <span class="built_in">void</span>(*_Destory)(SBO&amp;)<span class="keyword">noexcept</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虚表处理的只是<code>_SBO_Storage</code>的调用、移动和析构操作。</p>
+<p>虚表中需要处理的是如何原地构造，并且需要注意<code>noexcept</code>，还有<code>over_align</code>过度对齐类型。</p>
+<p><code>_Invoke</code>，需要提供<code>_Dx</code>,<code>_Rx</code>,<code>_Ax</code>,<code>是否Noexcept</code>,还有<code>_OrDx</code>，要实现限定符保留，必须使用<code>_OrDx</code>对函数对象强制类型转换<code>static_cast&lt;_OrDx&gt;(*ptr)</code></p>
+<p><code>_Move</code>，移动<code>src</code>到<code>dest</code>，会调用<code>src</code>的析构函数，默认<code>dest</code>就是空对象。</p>
+<p><code>_Destory</code>，销毁传入的对象，先析构再<code>delete</code>。</p>
+<p>这里我们只关注<code>_SBO_Storage</code>的操作，不越界操作虚表。同时，要说明的是，只是调用<code>_Move</code>函数实现移动是不完整的操作，并不能实现3个状态之间的转移。</p>
+<p>堆情况：</p>
+<ul>
+<li><code>_Move</code>函数直接复制指针即可，<code>src</code>参数不进行任何处理（也可以置空，但是没必要）</li>
+<li><code>_Destory</code>销毁函数指针，会调用析构函数（可以对平凡类型跳过析构</li>
+</ul>
+<p>栈情况：</p>
+<ul>
+<li><code>_Move</code> 需要调用可调用对象的移动构造函数，并且对<code>src</code>参数进行析构</li>
+<li><code>_Destory</code> 调用可调用对象的析构函数。</li>
+</ul>
+<p>后续我们可以针对上面进行优化。</p>
+<p>虚表在<code>Base</code>层进行构建，<code>_create_vtable</code>创建虚表，<code>_get_vtable_ptr</code>获取到虚表的指针。虚表是每个<code>_OrDx</code>一份，因此在<code>_get_vtable_ptr</code>静态成员函数定义一个静态变量，返回这个静态变量的地址。</p>
+<h3 id="限定符保留"><a href="#限定符保留" class="headerlink" title="限定符保留"></a>限定符保留</h3><p>在调用函数时，我们要保留各种限定符，包括<code>&amp;``noexcept``const</code>，保留放在<code>call layer</code>，<code>caller</code>定义了仿函数，函数就带上了上述的修饰符。这个会影响虚表<code>_Invoke</code>，我们需要在<code>caller</code>里面定义一个模板类型，传入的类型加上萃取的限定符(定义为<code>_OrDx</code> (Origial Decay_t Fx))。这个会在<code>mfunction</code>层的构造函数使用到。</p>
+<p>保留各种限定符号的方法就是偏特化，重载上述限定符的各种组合。</p>
+<h2 id="源码实现"><a href="#源码实现" class="headerlink" title="源码实现"></a>源码实现</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _FR_PACKAGEv3_HEADER</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _FR_PACKAGEv3_HEADER</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> packagev3 &#123;</span><br><span class="line"><span class="keyword">namespace</span> detail &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">size_t</span> Storage_Size = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//是否为过度对齐</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Fx</span>&gt;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">bool</span> is_over_aligned = <span class="built_in">alignof</span>(_Fx) &gt; <span class="built_in">alignof</span>(std::<span class="type">max_align_t</span>);</span><br><span class="line"><span class="comment">//是否需要走堆分配路线</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Fx</span>&gt;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">bool</span> require_on_heap = is_over_aligned&lt;_Fx&gt;</span><br><span class="line">|| <span class="built_in">sizeof</span>(_Fx) &gt; <span class="built_in">sizeof</span>(<span class="type">void</span>*) * Storage_Size;</span><br><span class="line"></span><br><span class="line"><span class="comment">//TODO add noexcept</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_MFPack</span> &#123;</span><br><span class="line">	<span class="function"><span class="keyword">union</span> <span class="title">alignas</span><span class="params">(std::<span class="type">max_align_t</span>)</span> _sbo_storage </span>&#123;</span><br><span class="line">		<span class="type">void</span>* ptr[Storage_Size];</span><br><span class="line">		<span class="type">char</span> data;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> _Dx&gt;</span></span><br><span class="line"><span class="function">		<span class="type">void</span> <span class="title">set_heap</span><span class="params">(_Dx* <span class="type">const</span> _func)</span><span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">			ptr[<span class="number">0</span>] = _func;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> _Dx&gt;</span></span><br><span class="line"><span class="function">		_Dx* <span class="title">stack_ptr</span><span class="params">()</span><span class="type">const</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">reinterpret_cast</span>&lt;_Dx*&gt;(&amp;(<span class="built_in">const_cast</span>&lt;_sbo_storage*&gt;(<span class="keyword">this</span>)-&gt;data));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> _Dx&gt;</span></span><br><span class="line"><span class="function">		_Dx* <span class="title">heap_ptr</span><span class="params">()</span><span class="type">const</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;_Dx*&gt;(ptr[<span class="number">0</span>]);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;storage;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">_virtual_table</span> &#123;</span><br><span class="line">		_Rx(*_Invoke)(<span class="type">const</span> _sbo_storage&amp;, _Ax&amp;&amp;...);</span><br><span class="line">		<span class="built_in">void</span>(*_Move)(_sbo_storage&amp;, _sbo_storage&amp;);</span><br><span class="line">		<span class="built_in">void</span>(*_Destory)(_sbo_storage&amp;) <span class="keyword">noexcept</span>; <span class="comment">//析构是noexcept</span></span><br><span class="line">	&#125;*vtab = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	* 判空时，不能只通过storage里面的内容进行判断，里面的内容是不确定的</span></span><br><span class="line"><span class="comment">	* 需要结合vtab的属性进行判断。如果vtab为空，则storage内容无意义</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Fx</span>, <span class="keyword">class</span> <span class="title class_">_Dx</span>&gt;</span><br><span class="line"><span class="type">void</span>* _Alloca_Heap(_Fx&amp;&amp; _Fn) &#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">_Guard</span> &#123;</span><br><span class="line">		<span class="type">void</span>* ptr = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">		~_Guard() &#123;</span><br><span class="line">			<span class="keyword">if</span> (ptr) &#123;</span><br><span class="line">				<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_over_aligned&lt;_Dx&gt;)</span> </span>&#123;</span><br><span class="line">					::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(ptr, std::<span class="type">align_val_t</span>&#123; <span class="keyword">alignof</span>(_Dx) &#125;)</span></span>;</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					::<span class="keyword">operator</span> <span class="built_in">delete</span>(ptr);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	_Guard guard;</span><br><span class="line">	<span class="type">void</span>* palloc;</span><br><span class="line">	<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_over_aligned&lt;_Dx&gt;)</span> </span>&#123;</span><br><span class="line">		palloc = ::<span class="keyword">operator</span> <span class="built_in">new</span>(<span class="built_in">sizeof</span>(_Dx), std::<span class="type">align_val_t</span>&#123; <span class="built_in">alignof</span>(_Dx) &#125;);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		palloc = ::<span class="keyword">operator</span> <span class="built_in">new</span>(<span class="built_in">sizeof</span>(_Dx));</span><br><span class="line">	&#125;</span><br><span class="line">	guard.ptr = palloc;</span><br><span class="line">	<span class="comment">//构造</span></span><br><span class="line">	::<span class="keyword">new</span>(palloc) _Dx(std::forward&lt;_Fx&gt;(_Fn));</span><br><span class="line">	guard.ptr = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">return</span> palloc;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line">_Rx _Invalid_Function(<span class="type">const</span> <span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp;,</span><br><span class="line">	_Ax&amp;&amp;...) &#123;</span><br><span class="line">	<span class="comment">//看情况再设置不同的异常效果</span></span><br><span class="line">	<span class="keyword">throw</span> std::<span class="built_in">exception</span>(<span class="string">&quot;Invaild function.&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_OrDx</span>, <span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line">_Rx _Invoke_Stack(<span class="type">const</span> <span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _storage,</span><br><span class="line">	_Ax&amp;&amp;... _args) &#123;</span><br><span class="line">	<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(std::is_void_v&lt;_Rx&gt;)</span> </span>&#123;</span><br><span class="line">		std::<span class="built_in">invoke</span>(<span class="built_in">static_cast</span>&lt;_OrDx&gt;(*_storage.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;()),</span><br><span class="line">			std::forward&lt;_Ax&gt;(_args)...);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> std::<span class="built_in">invoke</span>(<span class="built_in">static_cast</span>&lt;_OrDx&gt;(*_storage.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;()),</span><br><span class="line">			std::forward&lt;_Ax&gt;(_args)...);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_OrDx</span>, <span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line">_Rx _Invoke_Heap(<span class="type">const</span> <span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _storage,</span><br><span class="line">	_Ax&amp;&amp;... _args) &#123;</span><br><span class="line">	<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(std::is_void_v&lt;_Rx&gt;)</span> </span>&#123;</span><br><span class="line">		std::<span class="built_in">invoke</span>(<span class="built_in">static_cast</span>&lt;_OrDx&gt;(*_storage.<span class="built_in">heap_ptr</span>&lt;_Dx&gt;()),</span><br><span class="line">			std::forward&lt;_Ax&gt;(_args)...);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> std::<span class="built_in">invoke</span>(<span class="built_in">static_cast</span>&lt;_OrDx&gt;(*_storage.<span class="built_in">heap_ptr</span>&lt;_Dx&gt;()),</span><br><span class="line">			std::forward&lt;_Ax&gt;(_args)...);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//void(*_Move)(_sbo_storage&amp;, _sbo_storage&amp;);</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="type">void</span> _Move_heap(<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _dest,</span><br><span class="line">	<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _src) &#123;</span><br><span class="line">	<span class="comment">//使用memcpy复制</span></span><br><span class="line">	<span class="built_in">memcpy</span>(&amp;_dest.data, &amp;_src.data, <span class="built_in">sizeof</span>(<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//调用对象的移动构造函数，再析构src</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="type">void</span> _Move_stack(<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _dest,</span><br><span class="line">	<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _src) &#123;</span><br><span class="line">	<span class="keyword">auto</span> src_ptr = _src.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;();</span><br><span class="line">	::<span class="keyword">new</span>(_dest.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;()) _Dx(std::<span class="built_in">move</span>(*src_ptr));</span><br><span class="line">	src_ptr-&gt;~_Dx();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="type">void</span> _Destory_heap(<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _dest) <span class="keyword">noexcept</span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> obj = _dest.<span class="built_in">heap_ptr</span>&lt;_Dx&gt;();</span><br><span class="line">	obj-&gt;~_Dx();</span><br><span class="line">	<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(is_over_aligned&lt;_Dx&gt;)</span> </span>&#123;</span><br><span class="line">		::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span> <span class="params">(obj, std::<span class="type">align_val_t</span>&#123; <span class="keyword">alignof</span>(_Dx) &#125;)</span></span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		::<span class="keyword">operator</span> <span class="built_in">delete</span> (obj);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_Rx</span>, <span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="type">void</span> _Destory_stack(<span class="keyword">typename</span> _MFPack&lt;_Rx, _Ax...&gt;::_sbo_storage&amp; _dest) <span class="keyword">noexcept</span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> obj = _dest.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;();</span><br><span class="line">	obj-&gt;~_Dx();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>,<span class="keyword">class</span>... _Ax&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">_MFBase</span> &#123;</span><br><span class="line">	<span class="keyword">using</span> _MyPack = _MFPack&lt;_Rx, _Ax...&gt;;</span><br><span class="line">	<span class="keyword">using</span> _MyTable = <span class="keyword">typename</span> _MyPack::_virtual_table;</span><br><span class="line">	<span class="keyword">using</span> _MyStorage = <span class="keyword">typename</span> _MyPack::_sbo_storage;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构建虚表</span></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>,<span class="keyword">class</span> <span class="title class_">_OrDx</span>&gt;</span><br><span class="line">	<span class="type">static</span> <span class="keyword">constexpr</span> _MyTable _create_vtable() &#123;</span><br><span class="line">		_MyTable table&#123; <span class="literal">nullptr</span>,<span class="literal">nullptr</span>,<span class="literal">nullptr</span> &#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(require_on_heap&lt;_Dx&gt;)</span> </span>&#123;</span><br><span class="line">			table._Invoke = _Invoke_Heap&lt;_Dx, _OrDx, _Rx, _Ax...&gt;;</span><br><span class="line">			<span class="comment">//堆移动，我们移动一个整个storage,memcpy</span></span><br><span class="line">			table._Move = _Move_heap&lt;_Rx, _Ax...&gt;;</span><br><span class="line">			<span class="comment">//堆销毁，调用析构函数，并且delete</span></span><br><span class="line">			table._Destory = _Destory_heap&lt;_Dx, _Rx, _Ax...&gt;;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			table._Invoke = _Invoke_Stack&lt;_Dx, _OrDx, _Rx, _Ax...&gt;;</span><br><span class="line">			table._Move = _Move_stack&lt;_Dx, _Rx, _Ax...&gt;;</span><br><span class="line">			table._Destory = _Destory_stack&lt;_Dx, _Rx, _Ax...&gt;;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> table;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>, <span class="keyword">class</span> <span class="title class_">_OrDx</span>&gt;</span><br><span class="line">	<span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">const</span> _MyTable* _get_vtable_ptr() &#123;</span><br><span class="line">		<span class="type">static</span> <span class="keyword">constexpr</span> _MyTable tab = _create_vtable&lt;_Dx, _OrDx&gt;();</span><br><span class="line">		<span class="keyword">return</span> &amp;tab;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="type">const</span> _MyTable* <span class="title">vtable</span><span class="params">()</span><span class="type">const</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> pack.vtab;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function">_MyStorage&amp; <span class="title">storage</span><span class="params">()</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> pack.storage;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//销毁自身数据,转换为 empty状态</span></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">destory</span><span class="params">()</span> <span class="keyword">noexcept</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">empty</span>()) &#123;</span><br><span class="line">			pack.vtab-&gt;_Destory(pack.storage);</span><br><span class="line">			pack.vtab = <span class="literal">nullptr</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//将_other移动到自身，默认自身为空</span></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">move_from</span><span class="params">(_MyPack&amp;&amp; _other)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (_other.vtab != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			_other.vtab-&gt;_Move(pack.storage, _other.storage);</span><br><span class="line">			pack.vtab = _other.vtab; </span><br><span class="line">			_other.vtab = <span class="literal">nullptr</span>;<span class="comment">//这里我们不可以使用destory 会导致双重释放</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">assign</span><span class="params">(_MFBase&amp;&amp; _other)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">empty</span>()) &#123;</span><br><span class="line">			<span class="keyword">this</span>-&gt;<span class="built_in">destory</span>();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">move_from</span>(std::<span class="built_in">move</span>(_other.pack));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//isNoexcept</span></span><br><span class="line">	<span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> _Fx,<span class="keyword">class</span> _Dx, <span class="keyword">class</span> _OrDx&gt;</span></span><br><span class="line"><span class="function">	<span class="type">void</span> <span class="title">construct</span><span class="params">(_Fx&amp;&amp; _Fn)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//设置缓存</span></span><br><span class="line">		<span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(require_on_heap&lt;_Dx&gt;)</span> </span>&#123;</span><br><span class="line">			<span class="comment">//堆分配道路</span></span><br><span class="line">			pack.storage.<span class="built_in">set_heap</span>(_Alloca_Heap&lt;_Fx, _Dx&gt;(std::forward&lt;_Fx&gt;(_Fn)));</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//栈内联</span></span><br><span class="line">			std::<span class="built_in">construct_at</span>(pack.storage.<span class="built_in">stack_ptr</span>&lt;_Dx&gt;(), std::forward&lt;_Fx&gt;(_Fn));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//创建虚表</span></span><br><span class="line">		<span class="comment">//这里去除了const修饰，但是保证vtab里面的成员不会被修改，只会有vtab = *这种操作。</span></span><br><span class="line">		pack.vtab = <span class="built_in">const_cast</span>&lt;_MyTable*&gt;(_get_vtable_ptr&lt;_Dx, _OrDx&gt;());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="type">const</span> <span class="keyword">noexcept</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> pack.vtab == <span class="literal">nullptr</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//安全获得invoke</span></span><br><span class="line">	<span class="function"><span class="keyword">auto</span> <span class="title">get_invoke</span><span class="params">()</span><span class="type">const</span> -&gt; _<span class="title">Rx</span><span class="params">(*)</span><span class="params">(<span class="type">const</span> _MyStorage&amp;, _Ax&amp;&amp;...)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (pack.vtab == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">			<span class="comment">//返回一个抛出异常的函数</span></span><br><span class="line">			<span class="keyword">return</span> &amp;_Invalid_Function&lt;_Rx, _Ax...&gt;;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> pack.vtab-&gt;_Invoke;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	_MyPack pack;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... _Sign&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">_MFCall</span> &#123;</span><br><span class="line">	<span class="built_in">static_assert</span>(<span class="keyword">sizeof</span>...(_Sign) == <span class="number">0</span>&amp;&amp;<span class="literal">false</span>, <span class="string">&quot;Wrong function type&quot;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//萃取 const noexcept &amp;</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Rx</span>,<span class="keyword">class</span>..._Ax&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">_MFCall</span>&lt;_Rx(_Ax...)&gt;:<span class="keyword">public</span> _MFBase&lt;_Rx,_Ax...&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line">	<span class="keyword">using</span> _Origial = _Ty&amp;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Dx</span>&gt;</span><br><span class="line">	<span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">bool</span> _Invocable = std::is_invocable_r_v&lt;_Rx, _Dx, _Ax...&gt;;</span><br><span class="line">	<span class="comment">//可调用对象</span></span><br><span class="line">	<span class="function">_Rx <span class="title">operator</span><span class="params">()</span><span class="params">(_Ax... args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;<span class="built_in">get_invoke</span>()(<span class="keyword">this</span>-&gt;<span class="built_in">storage</span>(), std::forward&lt;_Ax&gt;(args)...);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span>... _Sign&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">mfunction</span> :<span class="keyword">private</span> _MFCall&lt;_Sign...&gt; &#123;</span><br><span class="line">	<span class="keyword">using</span> _Parent = _MFCall&lt;_Sign...&gt;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//从_Fn构造</span></span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">_Fx</span>&gt;</span><br><span class="line">	<span class="type">void</span> _Assign(_Fx&amp;&amp; _Fn) &#123;</span><br><span class="line">		<span class="keyword">using</span> _Dx = std::<span class="type">decay_t</span>&lt;_Fx&gt;;</span><br><span class="line">		<span class="keyword">using</span> _OrDx = _Parent::<span class="keyword">template</span> _Origial&lt;_Dx&gt;;</span><br><span class="line">		<span class="built_in">static_assert</span>(std::is_constructible_v&lt;_Dx, _Fx&gt;, <span class="string">&quot;Function type wrong, try std::move?&quot;</span>);</span><br><span class="line">		<span class="comment">//先销毁自身</span></span><br><span class="line">		<span class="keyword">this</span>-&gt;<span class="built_in">destory</span>();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">this</span>-&gt;<span class="keyword">template</span> <span class="built_in">construct</span>&lt;_Fx, _Dx, _OrDx&gt;(std::forward&lt;_Fx&gt;(_Fn));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="comment">//接入的函数需要进行检查，首先是需要能够从_Fx构造到_Dx</span></span><br><span class="line">	<span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> _Fx&gt;</span></span><br><span class="line"><span class="function">	<span class="title">mfunction</span><span class="params">(_Fx&amp;&amp; _Fn)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">using</span> _Dx = std::<span class="type">decay_t</span>&lt;_Fx&gt;;</span><br><span class="line">		<span class="keyword">using</span> _OrDx = _Parent::<span class="keyword">template</span> _Origial&lt;_Dx&gt;;</span><br><span class="line">		<span class="built_in">static_assert</span>(std::is_constructible_v&lt;_Dx, _Fx&gt;, <span class="string">&quot;Function type wrong, try std::move?&quot;</span>);</span><br><span class="line">		<span class="built_in">static_assert</span>(_Parent::<span class="keyword">template</span> _Invocable&lt;_OrDx&gt;, <span class="string">&quot;Callable signature does&#x27;t match _Rx(_Ax...)&quot;</span>);</span><br><span class="line">		<span class="keyword">this</span>-&gt;<span class="keyword">template</span> <span class="built_in">construct</span>&lt;_Fx, _Dx, _OrDx&gt;(std::forward&lt;_Fx&gt;(_Fn));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">mfunction</span>() &#123;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	mfunction&amp; <span class="keyword">operator</span>=(std::<span class="type">nullptr_t</span>) <span class="keyword">noexcept</span>&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;<span class="built_in">destory</span>();</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//禁止复制</span></span><br><span class="line">	<span class="built_in">mfunction</span>(<span class="type">const</span> mfunction&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">	mfunction&amp; <span class="keyword">operator</span>=(<span class="type">const</span> mfunction&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//_Move函数不保证move noexcept</span></span><br><span class="line">	<span class="built_in">mfunction</span>(mfunction&amp;&amp; _Other) &#123;</span><br><span class="line">		_Parent::<span class="built_in">move_from</span>(std::<span class="built_in">move</span>(_Other.pack));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	mfunction&amp; <span class="keyword">operator</span>=(mfunction&amp;&amp; _Other) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span> != std::<span class="built_in">addressof</span>(_Other)) &#123;</span><br><span class="line">			_Parent::<span class="built_in">assign</span>(std::<span class="built_in">move</span>(_Other));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//会检查是否处于empty状态</span></span><br><span class="line">	~<span class="built_in">mfunction</span>() &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;<span class="built_in">destory</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">using</span> <span class="title">_Parent::operator</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="keyword">using</span> _Parent::empty;</span><br><span class="line">	<span class="keyword">using</span> _Parent::assign;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>第二层萃取 const noexcept &amp;|&amp;&amp;的没有实现，但是原理都是一样的。</p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>横向对比了<code>std::move_only_function</code>和<code>std::function</code>的性能，结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>测试项 (对象类型)</th>
+<th>操作</th>
+<th>mfunction</th>
+<th>std::move_only_function</th>
+<th>std::function</th>
+<th>你的排名 &#x2F; 表现分析</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SmallTrivial (小对象+平凡)</td>
+<td>构造&#x2F;析构</td>
+<td>0.65</td>
+<td>0.62</td>
+<td>1.23</td>
+<td>🥈 极其逼近 MSVC 标准库</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>调用 (Invoke)</td>
+<td>1.24</td>
+<td>1.05</td>
+<td>1.04</td>
+<td>🥉 存在瓶颈 (~0.2ns 差距)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动构造</td>
+<td>106</td>
+<td>104</td>
+<td>108</td>
+<td>🥈 几乎无差异</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动赋值</td>
+<td>106</td>
+<td>103</td>
+<td>105</td>
+<td>🥈 几乎无差异</td>
+<td></td>
+</tr>
+<tr>
+<td>SmallNonTrivial (小对象+非平凡)</td>
+<td>构造&#x2F;析构</td>
+<td>0.63</td>
+<td>1.04</td>
+<td>1.25</td>
+<td>🥇 全场最快！反超标准库！</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>调用 (Invoke)</td>
+<td>1.3</td>
+<td>1.04</td>
+<td>1.03</td>
+<td>🥉 存在瓶颈 (~0.25ns 差距)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动构造</td>
+<td>105</td>
+<td>105</td>
+<td>104</td>
+<td>🥈 误差范围内，并列第一</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动赋值</td>
+<td>106</td>
+<td>106</td>
+<td>105</td>
+<td>🥈 误差范围内，并列第一</td>
+<td></td>
+</tr>
+<tr>
+<td>LargeTrivial (大对象堆分配)</td>
+<td>构造&#x2F;析构</td>
+<td>21.5</td>
+<td>21.1</td>
+<td>22.3</td>
+<td>🥈 堆分配(new&#x2F;delete)开销，符合预期</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>调用 (Invoke)</td>
+<td>1.26</td>
+<td>1.03</td>
+<td>1.03</td>
+<td>🥉 存在瓶颈 (~0.23ns 差距)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动构造</td>
+<td>114</td>
+<td>114</td>
+<td>115</td>
+<td>🥇 堆指针互换，极致速度</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>移动赋值</td>
+<td>121</td>
+<td>127</td>
+<td>126</td>
+<td>🥇 指针互换，略优于标准库</td>
+<td></td>
+</tr>
+<tr>
+<td>LargeNonTrivial (大对象+非平凡)</td>
+<td>构造&#x2F;析构</td>
+<td>21.6</td>
+<td>21.3</td>
+<td>21.8</td>
+<td>🥈 完全符合预期</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>调用 (Invoke)</td>
+<td>1.23</td>
+<td>1.04</td>
+<td>1.03</td>
+<td>🥉 存在瓶颈 (~0.2ns 差距)</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>分析下来可以看见本应该会被<code>std::move_only_function</code>拉开差距的<code>trivial</code>优化反而没啥太明显的地方，这是因为<code>/O2</code>优化的结果。</p>
+<p>最大的瓶颈就是在<code>Invoke</code>上，出现了<code>if</code>分支导致CPU流水线中引入了一个跳转分支，虽然有分支预测技术，但是判空的汇编代码开销也不少。标准库中使用的技术是<strong>零分支</strong>技术，同时使用了<strong>哑虚表技巧</strong>，这样就避免了虚表为空，同时调用“空状态”虚表invoke时也会报错。</p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/C/"># C++</a>
+                    
+                        <a href="/tags/%E6%BA%90%E7%A0%81/"># 源码</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/uncategorized/db2dc9bb3c4e/">C++ 原子操作</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
