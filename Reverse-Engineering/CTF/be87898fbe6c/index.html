@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Fering11">
+
+
+
+
+
+<title>Reverse: Vibration Controller | Fering11&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Fering11</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Fering11</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/tag">Tags</a>
+                
+                <a class="menu-item" href="/friends">Friends</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Reverse: Vibration Controller</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Fering11</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">九月 21, 2026&nbsp;&nbsp;10:17:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Reverse-Engineering/">Reverse Engineering</a>
+                            
+                                <a href="/categories/Reverse-Engineering/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<p>Reference: <a target="_blank" rel="noopener" href="https://github.com/ssh333/Monster-Party">https://github.com/ssh333/Monster-Party</a></p>
+</blockquote>
+<h1 id="Files"><a href="#Files" class="headerlink" title="Files"></a>Files</h1><p>The main subject of this reverse-engineering effort is a Flutter app (<code>怪兽派对.apk</code>, arm64-v8a). The app scans for devices over Bluetooth and, once a device is successfully identified, adds it to the app’s device queue. The physical device we obtained has two <strong>DC motors</strong>, which the app can control separately by adjusting the PWM frequency.</p>
+<h1 id="Exploration"><a href="#Exploration" class="headerlink" title="Exploration"></a>Exploration</h1><p>Unpacking with jadx shows that all the code is obfuscated and that the business logic is not in the Java layer. We can also see that the <code>lib</code> directory contains <code>libflutter.so</code> and <code>libapp.so</code>, where <code>libapp.so</code> holds the Dart 3.11 AOT business logic. In addition, <code>libflutter_blue_plus_android.so</code> is present — the native layer of the BLE plugin. That one is a library, so we won’t reverse it.</p>
+<p>Because this app depends on Bluetooth and I don’t have a rooted phone on hand, dynamic debugging isn’t convenient, so I could only hunt for clues through string searches.</p>
+<p>The searches pinned down a few key strings:</p>
+<ul>
+<li><code>mix_device</code> — the package name of the vendor’s in-house SDK</li>
+<li><code>writeMotor</code> — the motor command identifier</li>
+<li><code>AES</code> — this points to <code>basic/v3</code>; there is also <code>v1</code> and <code>v2</code> before it, and the <code>v3</code> protocol uses AES encryption</li>
+<li><code>write*</code> — the command entry-point functions</li>
+</ul>
+<p>This reveals that the device involves three kinds of protocol, using the <code>v1</code>, <code>v2</code>, and <code>v3</code> protocols.</p>
+<p>All three protocols involve a lot, so reverse engineering them is fairly difficult. Using Android HCI logs, I remote-controlled the toy with the original software and captured the logs. Log analysis confirmed:</p>
+<ul>
+<li>Protocol: v2</li>
+<li>Target device name: Ankni</li>
+<li>GATT service: <code>00009000-0000-1000-8000-00805f9b34fb</code></li>
+</ul>
+<p>This also gives a glimpse of part of the protocol design:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">write characteristic: 0x9002</span><br><span class="line">notify characteristic: 0x9001</span><br><span class="line">vibration frame example: A0 90 01 XX / A0 98 02 XX YY</span><br></pre></td></tr></table></figure>
+
+<h1 id="Native-layer-Reverse-Engineering"><a href="#Native-layer-Reverse-Engineering" class="headerlink" title="Native-layer Reverse Engineering"></a>Native-layer Reverse Engineering</h1><p>Next, let’s dig into the native layer.</p>
+<p>After Flutter&#x2F;Dart AOT compilation, all symbols are stripped. Plain disassembly only exposes addresses and registers, and class names, method names, and field offsets cannot be recovered. blutter recovers those symbols by parsing the object pool inside the Dart VM snapshot. blutter’s output is extremely high quality and very readable.</p>
+<p>Key objects in the pp file:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[pp+0x5bb60] AnonymousClosure: (0x163ff8c), in [package:mix_device/src/bluetooth/v2/ble_device_v2.dart] BLEDeviceV2::_handleOperate (0x163f868)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// from _handleOperate (0x163f868)</span><br><span class="line">LoadField field_93   ; comment: opCharacteristic (0x9001)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>field_93</code> &#x3D; <code>0x9001</code> &#x3D; the op characteristic, Write With Response, used for reads and configuration writes</li>
+</ul>
+<p>Also:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[pp+0x5bd00] AnonymousClosure: (0x160ae80), in [package:mix_device/src/bluetooth/v2/ble_device_v2.dart] BLEDeviceV2::_handleFunction (0x160a9f0)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// from _handleFunction (0x160a9f0)</span><br><span class="line">LoadField field_97   ; comment: functionCharacteristic (0x9002)</span><br><span class="line">withoutResponse: true</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>field_97</code> &#x3D; <code>0x9002</code> &#x3D; the function characteristic, Write Without Response, used for vibration&#x2F;power-off</li>
+</ul>
+<p>Both fields live in <code>ble_device_v2.dart</code>.</p>
+<p>Analyzing this function lets us determine the frame structure:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">byte[0] = CMD</span><br><span class="line">byte[1] = (ACTION&lt;&lt;7) | (LEN&lt;&lt;3)    // ACTION=1 means write, ACTION=0 means read</span><br><span class="line">byte[2..] = PAYLOAD</span><br><span class="line">// no CRC, no STX/ETX</span><br></pre></td></tr></table></figure>
+
+<p>Let’s analyze the <code>0xA0</code> command, which is our main recovery target; the main code is in <code>writeMotor</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">; AllocateArray r2=#0x2 (SMI tagged: 2&gt;&gt;1 = 1+1 = 2, but payload = [N] + pwms)</span><br><span class="line">; payload[0] = N (number of motors, SMI-tag decoded)</span><br><span class="line">; payload[1..N] = pwm values (strb in a loop)</span><br><span class="line">; call _handleFunction(0xA0, payload)</span><br></pre></td></tr></table></figure>
+
+<p>SMI tag verification: in blutter’s comment, <code>movz x1, #0x64</code> → logical 50 (<code>0x64 &gt;&gt; 1 = 50</code>, but <code>0x64</code> &#x3D; 100 decimal). In fact, <code>movz #0x64</code> at the battery clamp &#x3D; 100, consistent with <code>0x64 = 100</code> decimal. The ÷2 for SMI is only needed when decoding with <code>asr #1</code>; byte payloads are written directly.</p>
+<p>The resulting vibration frame is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A0  [0x80|((N+1)&lt;&lt;3)]  N  pwm[0]  pwm[1] ... pwm[N-1]</span><br></pre></td></tr></table></figure>
+
+<p>Example: 1 motor at 50% → <code>A0 90 01 32</code>; stop → <code>A0 90 01 00</code>.</p>
+<p>The response mechanism lives mainly in <code>onValueReceived</code>; taken together with <code>handleOperate</code>:</p>
+<ul>
+<li>Reads go over <code>0x9001</code> (Write With Response), sending <code>[cmd, 0x00]</code> (header byte &#x3D; 0 means read)</li>
+<li>The device’s reply comes back via notify; <code>onValueReceived</code> matches the pending list by the <code>cmd</code> byte (<code>firstWhereOrNull</code>) and completes the Future</li>
+<li>Timeout: <code>timeoutCallback @ 0x16402a8</code>, <code>Future.delayed(raw 0x258 &gt;&gt; 1 = 300ms)</code>, no retry</li>
+</ul>
+<p>The internal logic of <code>onValueReceived</code> is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data[0] = cmd</span><br><span class="line">data[1] &gt;&gt; 7 = ACTION (0 = reply to a read, 1 = device-initiated push)</span><br><span class="line">(data[1] &gt;&gt; 3) &amp; 0xF = LEN</span><br><span class="line">verify data.length == LEN + 2, otherwise drop</span><br></pre></td></tr></table></figure>
+
+<p>Device-initiated push events (Action &#x3D; 1):</p>
+<ul>
+<li><code>0x14</code>: battery level, <code>payload[0]</code> &#x3D; 0–100</li>
+<li><code>0x15</code>: heartbeat (device-initiated; no app-side heartbeat needed)</li>
+<li><code>0xA1</code>: button event → <code>onReceivedKeyData</code>, type byte <code>0x10/0x11/0x20/0x30/0x60</code></li>
+</ul>
+<p>Next let’s look at the operation queue <code>GlobalBLEOperationQueue</code>; the file is <code>global_ble_operation_queue.dart</code>. The following facts can be established:</p>
+<ul>
+<li>Global singleton; all GATT operations are strictly serialized (<code>_isProcessing</code> mutex)</li>
+<li><code>execute @ 0x16078d8</code> → <code>_enqueue @ 0x16085dc</code> → <code>_processQueue @ 0x1607ba4</code></li>
+<li>Priority ordering: sorted by priority int on insertion, lowest first</li>
+<li>3 s watchdog (Timer, <code>0x1607dc0</code>); on timeout it marks the entry cancelled and does not retry</li>
+</ul>
+<p>Then a potential bug emerged: when the underlying BLE future never settles, the 3 s watchdog does not advance the queue.</p>
+<p>The data models live in <code>mix_model.dart</code>, including <code>MixDeviceMotorLevel</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">field_7 (offset 0x8) = b0, default 0</span><br><span class="line">field_f (offset 0x10) = b1, default 100</span><br><span class="line">toData() → [b0, b1]</span><br><span class="line">fromData(data) → b0=data[0], b1=data[1]</span><br></pre></td></tr></table></figure>
+
+<p>This is used by the <code>0x17</code> motor strength configuration command.</p>
+<p>The PWM generation pipeline is in <code>motor_pwm_transformer.dart</code>:</p>
+<ul>
+<li><code>defaultSinglePwmRange = (min=10, max=100)</code></li>
+<li><code>defaultPwmRanges</code> (3 presets): <code>(10,50)</code>, <code>(20,80)</code>, <code>(40,100)</code>, selected by gesture class</li>
+<li><code>applyMotorRange</code>: 0 → 0; non-zero → clamped to <code>[max(min,10), min(max,200)]</code></li>
+<li>Two-toy mapping:<ul>
+<li><code>_buildSyncPwmByIndex</code>: aligns by index, padding with the trailing value when short</li>
+<li><code>_buildInterleavePwmByAverage</code>: the secondary device runs the inverse of the primary device’s average (<code>100 - avg</code>)</li>
+</ul>
+</li>
+</ul>
+<p>We were also able to find the v3 protocol. A shallow analysis: the v3 protocol is very complex. It calls the backend <code>POST /basic/v3/auth/signature/secret</code> to obtain a per-device unique key, and the frame contents appear to involve AES encryption.</p>
+<p>The main functional points are listed below:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outbound frame construction (function path)</td>
+<td><code>BLEDeviceV2._handleFunction</code><br/> @ <code>0x160a9f0</code></td>
+</tr>
+<tr>
+<td>Outbound frame construction + op send (op path)</td>
+<td><code>BLEDeviceV2._handleOperate</code><br/> @ <code>0x163f868</code><br/>; <code>_dispatchOperateWithTimeout</code><br/> @ <code>0x163f7c0</code></td>
+</tr>
+<tr>
+<td>Vibration</td>
+<td><code>BLEDeviceV2.writeMotor</code><br/> @ <code>0x17e1108</code><br/> (cmd 0xA0)</td>
+</tr>
+<tr>
+<td>Notification parsing + dispatch</td>
+<td><code>BLEDeviceV2.onValueReceived</code><br/> @ <code>0x162bff0</code><br/>; button parsing <code>onReceivedKeyData</code><br/> @ <code>0x162c…</code></td>
+</tr>
+<tr>
+<td>Read-response timeout (300 ms)</td>
+<td><code>timeoutCallback</code><br/> @ <code>0x16402a8</code><br/> (<code>Future.delayed</code><br/>, raw <code>0x258</code><br/>→300)</td>
+</tr>
+<tr>
+<td>Init &#x2F; discovery &#x2F; MTU &#x2F; notifications</td>
+<td><code>init</code><br/> @ <code>0x1634d34</code><br/>; <code>initCharacteristics</code><br/> @ <code>0x16350e8</code><br/>; <code>_initMtu</code><br/> @ <code>0x163580c</code></td>
+</tr>
+<tr>
+<td>Characteristic fields</td>
+<td><code>field_97</code><br/> &#x3D; 0x9002 (write&#x2F;function); <code>field_93</code><br/> &#x3D; 0x9001 (op)</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td><code>GlobalBLEOperationQueue.execute</code><br/> @ <code>0x16078d8</code><br/>; <code>_processQueue</code><br/> @ <code>0x1607ba4</code><br/>; timeout 3 s @ <code>0x1607dc0</code></td>
+</tr>
+<tr>
+<td>Models</td>
+<td><code>MixDeviceMotorLevel</code><br/> (<code>mix_model.dart</code><br/> @ <code>0x163c8fc</code><br/>); PWM <code>MotorPwmTransformer</code><br/> (<code>motor_pwm_transformer.dart</code><br/>)</td>
+</tr>
+</tbody></table>
+<h1 id="Reconstruction"><a href="#Reconstruction" class="headerlink" title="Reconstruction"></a>Reconstruction</h1><h2 id="GATT-Profile"><a href="#GATT-Profile" class="headerlink" title="GATT Profile"></a>GATT Profile</h2><p>Characteristics are located solely by their 16-bit UUID — the app flattens all discovered characteristics (across every service) into a single <code>Map&lt;uuidString, characteristic&gt;</code> and looks them up by UUID. No parent-service UUID filtering is applied, so only the characteristic UUID matters. (16-bit UUIDs are expanded using the SIG base UUID <code>0000XXXX-0000-1000-8000-00805f9b34fb</code>.)</p>
+<table>
+<thead>
+<tr>
+<th>UUID (16-bit)</th>
+<th>Code name (field)</th>
+<th>Role</th>
+<th>How the app writes here</th>
+<th>Notifications</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0x9002</code></td>
+<td>“function” (<code>field_97</code><br/>)</td>
+<td>Real-time function commands (vibration <code>0xA0</code><br/>, power-off <code>0xA2</code><br/>, extend <code>0xA3</code><br/>)</td>
+<td>Write Without Response (fire-and-forget)</td>
+<td>Enabled</td>
+</tr>
+<tr>
+<td><code>0x9001</code></td>
+<td>“op” (<code>field_93</code><br/>)</td>
+<td>Operation commands and queries (all reads + configuration writes: <code>0x01…0x18</code><br/>)</td>
+<td>Write With Response (waits for notification)</td>
+<td>Enabled</td>
+</tr>
+<tr>
+<td><code>0x2902</code></td>
+<td>CCCD descriptor</td>
+<td>Enables notifications on both characteristics</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Note: the naming in the code is counter-intuitive — the “function” characteristic (<code>0x9002</code>) carries vibration data, while the “op” characteristic (<code>0x9001</code>) carries control&#x2F;query commands. <code>setNotifyValue(true)</code> is applied to both, and both feed into the same <code>onValueReceived</code> parser.</p>
+</blockquote>
+<h2 id="Connection-and-Initialization"><a href="#Connection-and-Initialization" class="headerlink" title="Connection and Initialization"></a>Connection and Initialization</h2><p><code>BLEDeviceV2.init()</code> runs after the BLE link is established:</p>
+<ol>
+<li><code>discoverServices()</code> (through the queue).</li>
+<li><code>await Future.delayed(25 ms)</code> ← stabilization wait.</li>
+<li><code>requestMtu()</code> (Android). The negotiated MTU is stored&#x2F;logged (<code>communicate mtu = …</code>). Frames are small (≤ about 18 bytes), so MTU is not a control constraint.</li>
+<li><code>await Future.delayed(50 ms)</code> ← stabilization wait.</li>
+<li>Build the <code>uuid → characteristic</code> map; assert that it contains <code>&quot;9002&quot;</code> and <code>&quot;9001&quot;</code>. If either is missing → <code>&quot;init characteristics failed&quot;</code>.</li>
+<li><code>initCharacteristics()</code>: <code>setNotifyValue(true)</code> on both <code>0x9001</code> and <code>0x9002</code> (writing the CCCD <code>0x2902</code>), and register a value-change handler (<code>onValueReceived</code>) on both.</li>
+<li>The service layer then performs device bring-up (polymorphic, order approximate): toy verification <code>0x00</code>, device-info reads (<code>0x01</code> deviceID, <code>0x02</code> firmware, <code>0x03</code> MAC, <code>0x04</code> SN, <code>0x06</code> productID, <code>0x05</code> variantID, <code>0x09</code> hardwareID), and device initialization <code>0x0B</code>. Failure here → session <code>&quot;init_failed&quot;</code> &#x2F; <code>&quot;设备初始化失败：无法完成初始化流程&quot;</code> (device initialization failed: could not complete the initialization flow).</li>
+</ol>
+<p>v2 has no encryption gate (unlike v3). The <code>0x00</code> verification is a lightweight handshake; no server-issued key is needed to control the device. Once notifications are enabled, you can send vibration frames on <code>0x9002</code>.</p>
+<h2 id="Frame-Format"><a href="#Frame-Format" class="headerlink" title="Frame Format"></a>Frame Format</h2><p>Every v2 frame — outbound and inbound — is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">byte[0] = CMD                              // command code</span><br><span class="line">byte[1] = (ACTION &lt;&lt; 7) | (LEN &lt;&lt; 3)       // header byte</span><br><span class="line">byte[2 .. 2+LEN-1] = PAYLOAD               // LEN bytes</span><br><span class="line">total length = LEN + 2</span><br></pre></td></tr></table></figure>
+
+<p>Bit layout of the header byte <code>byte[1]</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bit:   7    6 5 4 3    2 1 0</span><br><span class="line">      [A] [ L L L L ] [0 0 0]</span><br><span class="line">       |       |         └─ reserved (always 0)</span><br><span class="line">       |       └─ LEN = payload length, 0..15 (bits 6..3)</span><br><span class="line">       └─ ACTION/direction flag (bit 7):</span><br><span class="line">            outbound WRITE/command → 1 (header = 0x80 | (LEN&lt;&lt;3))</span><br><span class="line">            outbound READ request  → 0 (header =        LEN&lt;&lt;3 )</span><br><span class="line">            inbound from the device → the device sets it: 0 = reply to a read, 1 = device push</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>No checksum &#x2F; CRC. No STX&#x2F;ETX.</li>
+<li>Inbound validation: the parser requires <code>total &gt;= 2</code> and <code>total == LEN + 2</code>; otherwise it logs <code>&quot;on op received invalid length data&quot;</code> and drops the frame.</li>
+<li>Since <code>LEN</code> is 4 bits, the per-frame payload is ≤ 15 bytes.</li>
+</ul>
+<p>There are two transmission paths:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Used by</th>
+<th>Characteristic</th>
+<th>Write type</th>
+<th>Wait for a reply?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>_handleFunction(cmd, data)</code></td>
+<td><code>0xA0</code><br/> vibration, <code>0xA2</code><br/> power-off, <code>0xA3</code><br/> extend</td>
+<td><code>0x9002</code></td>
+<td>Write Without Response</td>
+<td>No (fire-and-forget)</td>
+</tr>
+<tr>
+<td><code>_handleOperate(OPModel)</code><br/> via <code>_dispatchOperateWithTimeout</code></td>
+<td>All reads + configuration writes (<code>0x01…0x18</code><br/>)</td>
+<td><code>0x9001</code></td>
+<td>Write With Response</td>
+<td>Yes — match the notification, 300 ms timeout</td>
+</tr>
+</tbody></table>
+<h2 id="Complete-Command-Set"><a href="#Complete-Command-Set" class="headerlink" title="Complete Command Set"></a>Complete Command Set</h2><p>CMD codes (from the in-code label map). Direction: ↑ app→device, ↓ device→app.</p>
+<table>
+<thead>
+<tr>
+<th>CMD</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Path&#x2F;Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0x00</code></td>
+<td>Toy verification</td>
+<td>↕</td>
+<td>op path; connection handshake</td>
+</tr>
+<tr>
+<td><code>0x01</code></td>
+<td>Device ID</td>
+<td>↑request&#x2F;↓response</td>
+<td>read; response payload &#x3D; 4 bytes → uint32</td>
+</tr>
+<tr>
+<td><code>0x02</code></td>
+<td>Firmware version</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x03</code></td>
+<td>MAC address</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x04</code></td>
+<td>SN</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x05</code></td>
+<td>Variant ID</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x06</code></td>
+<td>Product ID</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x07</code></td>
+<td>Combo product ID</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x08</code></td>
+<td>Combo variant ID</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x09</code></td>
+<td>Hardware ID</td>
+<td>↑&#x2F;↓</td>
+<td>read</td>
+</tr>
+<tr>
+<td><code>0x0A</code></td>
+<td>Clear data</td>
+<td>↑</td>
+<td>op write</td>
+</tr>
+<tr>
+<td><code>0x0B</code></td>
+<td>Device initialization</td>
+<td>↑</td>
+<td>op write; connection</td>
+</tr>
+<tr>
+<td><code>0x10</code></td>
+<td>Travel lock</td>
+<td>↕</td>
+<td>op write; payload &#x3D; <code>TravelLockModel.toData()</code><br/> (about 1 byte)</td>
+</tr>
+<tr>
+<td><code>0x11</code></td>
+<td>Power-on heating parameters</td>
+<td>↑</td>
+<td>op write; payload &#x3D; <code>HeatingModel.toData()</code><br/> (multi-byte)</td>
+</tr>
+<tr>
+<td><code>0x12</code></td>
+<td>Light brightness</td>
+<td>↑</td>
+<td>op write; payload &#x3D; <code>[level]</code><br/> (1 byte)</td>
+</tr>
+<tr>
+<td><code>0x13</code></td>
+<td>Set heating state</td>
+<td>↑</td>
+<td>op write; payload &#x3D; <code>[on?1:0]</code></td>
+</tr>
+<tr>
+<td><code>0x14</code></td>
+<td>Battery</td>
+<td>↑request&#x2F;↓push</td>
+<td>battery%&#x3D;payload[0]</td>
+</tr>
+<tr>
+<td><code>0x15</code></td>
+<td>Heartbeat</td>
+<td>↓</td>
+<td>device push</td>
+</tr>
+<tr>
+<td><code>0x17</code></td>
+<td>Motor level (strength configuration)</td>
+<td>↕</td>
+<td>op; payload &#x3D; <code>MixDeviceMotorLevel.toData()</code><br/> &#x3D; <code>[b0, b1]</code><br/>, default <code>[0,100]</code></td>
+</tr>
+<tr>
+<td><code>0x18</code></td>
+<td>Extended peripheral status</td>
+<td>↕</td>
+<td>op</td>
+</tr>
+<tr>
+<td><code>0xA0</code></td>
+<td>Write vibration</td>
+<td>↑</td>
+<td>function path</td>
+</tr>
+<tr>
+<td><code>0xA1</code></td>
+<td>Button&#x2F;key</td>
+<td>↓</td>
+<td>device push → <code>MixDeviceKeyEvent</code></td>
+</tr>
+<tr>
+<td><code>0xA2</code></td>
+<td>Power off</td>
+<td>↑</td>
+<td>function path; payload &#x3D; empty → on the wire <code>A2 80</code></td>
+</tr>
+<tr>
+<td><code>0xA3</code></td>
+<td>Work-unit extension</td>
+<td>↑</td>
+<td>function path; payload &#x3D; a caller-supplied <code>List&lt;int&gt;</code><br/> (pass-through)</td>
+</tr>
+<tr>
+<td><code>0xA4</code></td>
+<td>Pressure-report toggle</td>
+<td>↑</td>
+<td>op write; payload &#x3D; <code>[on?1:0]</code></td>
+</tr>
+<tr>
+<td><code>0xA5</code></td>
+<td>Sensor-report toggle</td>
+<td>↑</td>
+<td>op write; payload &#x3D; <code>[on?1:0]</code></td>
+</tr>
+</tbody></table>
+<p>Among these, <code>0xA0</code> is the most important: it sets the instantaneous strength of each motor. The payload for this CMD is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload = [ N, pwm_0, pwm_1, ..., pwm_&#123;N-1&#125; ]</span><br><span class="line">  N      = number of motors (payload[0])</span><br><span class="line">  pwm_i  = strength of motor i, integer 0..100</span><br></pre></td></tr></table></figure>
+
+<p>The complete on-air frame for a Write Without Response to <code>0x9002</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[0] = 0xA0</span><br><span class="line">[1] = 0x80 | ((N+1) &lt;&lt; 3)      // ACTION=1 (write); LEN = N+1 (count byte + N pwm bytes)</span><br><span class="line">[2] = N</span><br><span class="line">[3 + i] = pwm_i                // i = 0..N-1</span><br><span class="line">total = N + 3 bytes</span><br></pre></td></tr></table></figure>
+
+<p>For example:</p>
+<table>
+<thead>
+<tr>
+<th>Intent</th>
+<th>Bytes (hex)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 motor @ 50</td>
+<td><code>A0 90 01 32</code></td>
+</tr>
+<tr>
+<td>1 motor @ 100</td>
+<td><code>A0 90 01 64</code></td>
+</tr>
+<tr>
+<td>1 motor OFF</td>
+<td><code>A0 90 01 00</code></td>
+</tr>
+<tr>
+<td>2 motors @ (100, 0)</td>
+<td><code>A0 98 02 64 00</code></td>
+</tr>
+<tr>
+<td>2 motors OFF</td>
+<td><code>A0 98 02 00 00</code></td>
+</tr>
+<tr>
+<td>3 motors @ (30,60,90)</td>
+<td><code>A0 A0 03 1E 3C 5A</code></td>
+</tr>
+</tbody></table>
+<h2 id="Rules"><a href="#Rules" class="headerlink" title="Rules"></a>Rules</h2><p>At runtime the following rules must be observed for control to succeed:</p>
+<ul>
+<li>Deduplication: the app drops a frame identical to the previously sent frame (<code>_isSamePwm</code>). If you re-send the same PWM, it may be a no-op at the app layer — send on change; the device holds the state of the last command until a new frame or power-off. To stop, send zeros (<code>A0 … 00 …</code>) or <code>0xA2</code>.</li>
+<li>Value range: <code>pwm_i ∈ [0,100]</code>. In the app’s own pipeline, an active motor is floored to 10 (values 1–9 are raised to 10; 0 stays 0) and clamped to the device’s per-motor <code>[min,max]</code> (default max 100; the format tolerates up to 200, but no factory default exceeds 100). If you drive the device directly, you can send any value 0–100; the device firmware is expected to accept 0–100.</li>
+<li>Cadence: the waveform&#x2F;playback engine ticks at a high rate (nominally about 8 ms, raw 16 on the internal timer) and calls the send path on every tick, but the serial queue (§11) + the dedup gate determine the actual over-the-air rate. In practice: send only on PWM change; there is no artificial minimum interval in the queue, but keep BLE reasonable (≤ about 50–60 Hz).</li>
+<li>Written as Write Without Response → no ACK, lowest latency</li>
+</ul>
+<h2 id="Reference-Pseudocode"><a href="#Reference-Pseudocode" class="headerlink" title="Reference Pseudocode"></a>Reference Pseudocode</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">WRITE_CHAR  = <span class="number">0x9002</span>   <span class="comment"># function: vibration/power-off/extend, Write Without Response</span></span><br><span class="line">OP_CHAR     = <span class="number">0x9001</span>   <span class="comment"># op: reads/config, Write With Response</span></span><br><span class="line">CCCD        = <span class="number">0x2902</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">frame</span>(<span class="params">cmd, payload=<span class="string">b&quot;&quot;</span>, write=<span class="literal">True</span></span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(payload) &lt;= <span class="number">15</span></span><br><span class="line">    action = <span class="number">1</span> <span class="keyword">if</span> write <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bytes</span>([cmd &amp; <span class="number">0xFF</span>, (action &lt;&lt; <span class="number">7</span>) | (<span class="built_in">len</span>(payload) &lt;&lt; <span class="number">3</span>)]) + <span class="built_in">bytes</span>(payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- vibration ---</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">vibrate</span>(<span class="params">motors</span>):                      <span class="comment"># motors = [pwm0, pwm1, ...], each 0..100</span></span><br><span class="line">    payload = <span class="built_in">bytes</span>([<span class="built_in">len</span>(motors)]) + <span class="built_in">bytes</span>(<span class="built_in">max</span>(<span class="number">0</span>, <span class="built_in">min</span>(<span class="number">100</span>, p)) <span class="keyword">for</span> p <span class="keyword">in</span> motors)</span><br><span class="line">    ble_write(WRITE_CHAR, frame(<span class="number">0xA0</span>, payload, write=<span class="literal">True</span>), response=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">stop</span>(<span class="params">n_motors</span>):        vibrate([<span class="number">0</span>]*n_motors)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">power_off</span>():           ble_write(WRITE_CHAR, frame(<span class="number">0xA2</span>, <span class="string">b&quot;&quot;</span>, write=<span class="literal">True</span>), response=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- reads (op path) ---</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">cmd, timeout_ms=<span class="number">300</span></span>):</span><br><span class="line">    fut = pending.register(cmd)                       <span class="comment"># match the response by cmd</span></span><br><span class="line">    ble_write(OP_CHAR, frame(cmd, <span class="string">b&quot;&quot;</span>, write=<span class="literal">False</span>), response=<span class="literal">True</span>)  <span class="comment"># [cmd, 0x00]</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> fut.timeout(timeout_ms)</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- notification parser (registered on both 0x9001 and 0x9002) ---</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_notify</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(data) &lt; <span class="number">2</span>: <span class="keyword">return</span></span><br><span class="line">    cmd    = data[<span class="number">0</span>]</span><br><span class="line">    action = data[<span class="number">1</span>] &gt;&gt; <span class="number">7</span></span><br><span class="line">    length = (data[<span class="number">1</span>] &gt;&gt; <span class="number">3</span>) &amp; <span class="number">0x0F</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(data) != length + <span class="number">2</span>: <span class="keyword">return</span>               <span class="comment"># invalid frame</span></span><br><span class="line">    payload = data[<span class="number">2</span>:<span class="number">2</span>+length]</span><br><span class="line">    <span class="keyword">if</span> action == <span class="number">0</span>:                                   <span class="comment"># reply to a read</span></span><br><span class="line">        pending.resolve(cmd, payload)</span><br><span class="line">    <span class="keyword">else</span>:                                             <span class="comment"># device push</span></span><br><span class="line">        <span class="keyword">if</span>   cmd == <span class="number">0x14</span>: battery   = payload[<span class="number">0</span>]      <span class="comment"># 0..100</span></span><br><span class="line">        <span class="keyword">elif</span> cmd == <span class="number">0x15</span>: on_heartbeat(payload)</span><br><span class="line">        <span class="keyword">elif</span> cmd == <span class="number">0xA1</span>: on_key(payload)</span><br><span class="line">        <span class="comment"># ... 0x18 / 0xA4 / 0xA5</span></span><br></pre></td></tr></table></figure>
+
+<p>The connection sequence to follow:</p>
+<p><code>connect → discoverServices → sleep 25ms → requestMtu → sleep 50ms → enable notify (CCCD) on 0x9001 &amp; 0x9002 → (optional) verify 0x00 + read info → ready</code></p>
+<p>Then stream <code>vibrate</code> frames whenever there is a change.</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Fering11</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Reverse-Engineering/"># Reverse Engineering</a>
+                    
+                        <a href="/tags/Flutter/"># Flutter</a>
+                    
+                        <a href="/tags/Bluetooth/"># Bluetooth</a>
+                    
+                        <a href="/tags/BLE/"># BLE</a>
+                    
+                        <a href="/tags/Protocol-Analysis/"># Protocol Analysis</a>
+                    
+                        <a href="/tags/ARM64/"># ARM64</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/uncategorized/2a13fe0d6875/">C++ 对move_only_function的简单研究</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Fering11 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
