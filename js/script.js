@@ -39,29 +39,28 @@ document.ready(
 
         function setTheme(status = 'dark') {
             if (status === 'dark') {
-                window.sessionStorage.theme = 'dark'
+                window.sessionStorage.setItem('theme', 'dark')
                 pagebody.classList.add('dark-theme');
                 document.getElementById("switch_default").checked = true
                 document.getElementById("mobile-toggle-theme").innerText = "· Dark"
             } else {
-                window.sessionStorage.theme = 'light'
+                window.sessionStorage.setItem('theme', 'light')
                 pagebody.classList.remove('dark-theme');
                 document.getElementById("switch_default").checked = false
                 document.getElementById("mobile-toggle-theme").innerText = "· Light"
             }
         };
 
-        setTheme(window.sessionStorage.theme ?? default_theme)
+        const savedTheme = window.sessionStorage.getItem('theme') || default_theme
+        setTheme(savedTheme)
 
         document.getElementsByClassName('toggleBtn')[0].addEventListener('click', () => {
-            window.sessionStorage.theme = window.sessionStorage.theme === 'dark' ? 'light' : 'dark'
-            setTheme(window.sessionStorage.theme)
-            document.getElementById("switch_default").checked = window.sessionStorage.theme === 'light'
+            const newTheme = window.sessionStorage.getItem('theme') === 'dark' ? 'light' : 'dark'
+            setTheme(newTheme)
         })
         document.getElementById('mobile-toggle-theme').addEventListener('click', () => {
-            window.sessionStorage.theme = window.sessionStorage.theme === 'dark' ? 'light' : 'dark'
-            setTheme(window.sessionStorage.theme)
-            document.getElementById("mobile-toggle-theme").innerText = window.sessionStorage.theme === 'light' ? "· Light" : "· Dark"
+            const newTheme = window.sessionStorage.getItem('theme') === 'dark' ? 'light' : 'dark'
+            setTheme(newTheme)
         })
     }
 );

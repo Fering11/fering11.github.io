@@ -29,6 +29,19 @@
     
 
 
+<!-- Prevent theme flashing (FOUC) -->
+<script>
+(function() {
+    const defaultTheme = 'dark';
+    const savedTheme = window.sessionStorage.getItem('theme') || defaultTheme;
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        document.body.classList.add('dark-theme');
+    }
+})();
+</script>
+
+
 
     <!-- scripts list from _config.yml -->
     
@@ -148,6 +161,65 @@
                     
                     <div class="card-item">
                         <div class="categories">
+                            <a href="/categories/CTF/">
+                                <h3>
+                                    <i class="iconfont icon-category" style="padding-right:3px"></i>
+                                    CTF
+                                </h3>
+                            </a>
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/8dd8209564bc/">[HDCTF2019] Maze WP</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/70fe03727d41/">[Newstar2025] Reverse3 花指令</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/ee7f4c5b040f/">[Newstar2025] Reverse4 Dancing Keys</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/38716dbccafa/">[ISCTF 2025] ez_tea</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                            
+                            
+                                <a class="more-post-link" href="/categories/CTF/">More >></a>
+                            
+                        </div>
+                    </div>
+                
+                    
+                    <div class="card-item">
+                        <div class="categories">
                             <a href="/categories/C/">
                                 <h3>
                                     <i class="iconfont icon-category" style="padding-right:3px"></i>
@@ -189,69 +261,10 @@
                                 
                                     <article class="archive-item">
                                         <a class="archive-item-link"
-                                           href="/Reverse-Engineering/CTF/be87898fbe6c/">Reverse: Vibration Controller</a>
+                                           href="/Reverse-Engineering/CTF/d65f407b1f3c/">Reverse: Vibration Controller</a>
                                     </article>
                                 
                             
-                            
-                        </div>
-                    </div>
-                
-                    
-                    <div class="card-item">
-                        <div class="categories">
-                            <a href="/categories/CTF/">
-                                <h3>
-                                    <i class="iconfont icon-category" style="padding-right:3px"></i>
-                                    CTF
-                                </h3>
-                            </a>
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/70fe03727d41/">[Newstar2025] Reverse3 花指令</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/168ee05721a0/">[强网杯2025] JustRe</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/ee7f4c5b040f/">[Newstar2025] Reverse4 Dancing Keys</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/38716dbccafa/">[ISCTF 2025] ez_tea</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                            
-                            
-                                <a class="more-post-link" href="/categories/CTF/">More >></a>
                             
                         </div>
                     </div>
@@ -270,7 +283,7 @@
                                 
                                     <article class="archive-item">
                                         <a class="archive-item-link"
-                                           href="/Reverse-Engineering/CTF/be87898fbe6c/">Reverse: Vibration Controller</a>
+                                           href="/Reverse-Engineering/CTF/d65f407b1f3c/">Reverse: Vibration Controller</a>
                                     </article>
                                 
                             

@@ -29,6 +29,19 @@
     
 
 
+<!-- Prevent theme flashing (FOUC) -->
+<script>
+(function() {
+    const defaultTheme = 'dark';
+    const savedTheme = window.sessionStorage.getItem('theme') || defaultTheme;
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        document.body.classList.add('dark-theme');
+    }
+})();
+</script>
+
+
 
     <!-- scripts list from _config.yml -->
     

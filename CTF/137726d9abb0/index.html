@@ -29,6 +29,19 @@
     
 
 
+<!-- Prevent theme flashing (FOUC) -->
+<script>
+(function() {
+    const defaultTheme = 'dark';
+    const savedTheme = window.sessionStorage.getItem('theme') || defaultTheme;
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        document.body.classList.add('dark-theme');
+    }
+})();
+</script>
+
+
 
     <!-- scripts list from _config.yml -->
     
@@ -470,8 +483,6 @@
                     
                         <a href="/tags/wp/"># wp</a>
                     
-                        <a href="/tags/RC4%E5%8A%A0%E5%AF%86/"># RC4加密</a>
-                    
                         <a href="/tags/N1CTF/"># N1CTF</a>
                     
                         <a href="/tags/%E8%84%B1%E5%A3%B3/"># 脱壳</a>
@@ -481,6 +492,8 @@
                         <a href="/tags/Qt%E9%80%86%E5%90%91/"># Qt逆向</a>
                     
                         <a href="/tags/AES%E5%8A%A0%E5%AF%86/"># AES加密</a>
+                    
+                        <a href="/tags/RC4%E5%8A%A0%E5%AF%86/"># RC4加密</a>
                     
                         <a href="/tags/GMP%E5%BA%93/"># GMP库</a>
                     
