@@ -34,32 +34,36 @@ document.ready(
     // this script shouldn't be changed.
     () => {
         const pagebody = document.getElementsByTagName('body')[0]
+        const pagehtml = document.documentElement
 
         const default_theme = 'dark' // 'light'
 
         function setTheme(status = 'dark') {
-            if (status === 'dark') {
-                window.sessionStorage.setItem('theme', 'dark')
-                pagebody.classList.add('dark-theme');
-                document.getElementById("switch_default").checked = true
-                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
-            } else {
-                window.sessionStorage.setItem('theme', 'light')
-                pagebody.classList.remove('dark-theme');
-                document.getElementById("switch_default").checked = false
-                document.getElementById("mobile-toggle-theme").innerText = "· Light"
-            }
+            const dark = status === 'dark';
+            window.sessionStorage.setItem('theme', dark ? 'dark' : 'light')
+            // keep <html> and <body> in sync: <html> drives the canvas
+            // background (see head.ejs), <body> drives the theme styles.
+            pagehtml.classList.toggle('dark-theme', dark);
+            pagebody.classList.toggle('dark-theme', dark);
+            const switchDefault = document.getElementById("switch_default")
+            if (switchDefault) switchDefault.checked = dark
+            const mobileToggle = document.getElementById("mobile-toggle-theme")
+            if (mobileToggle) mobileToggle.innerText = dark ? "· Dark" : "· Light"
         };
 
-        const savedTheme = window.sessionStorage.getItem('theme') || default_theme
-        setTheme(savedTheme)
+        const getSavedTheme = () => {
+            try { return window.sessionStorage.getItem('theme') || default_theme; } catch (e) { return default_theme; }
+        };
+        setTheme(getSavedTheme())
 
-        document.getElementsByClassName('toggleBtn')[0].addEventListener('click', () => {
-            const newTheme = window.sessionStorage.getItem('theme') === 'dark' ? 'light' : 'dark'
+        const toggleBtn = document.getElementsByClassName('toggleBtn')[0]
+        if (toggleBtn) toggleBtn.addEventListener('click', () => {
+            const newTheme = getSavedTheme() === 'dark' ? 'light' : 'dark'
             setTheme(newTheme)
         })
-        document.getElementById('mobile-toggle-theme').addEventListener('click', () => {
-            const newTheme = window.sessionStorage.getItem('theme') === 'dark' ? 'light' : 'dark'
+        const mobileToggleBtn = document.getElementById('mobile-toggle-theme')
+        if (mobileToggleBtn) mobileToggleBtn.addEventListener('click', () => {
+            const newTheme = getSavedTheme() === 'dark' ? 'light' : 'dark'
             setTheme(newTheme)
         })
     }

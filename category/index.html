@@ -23,23 +23,27 @@
 
 
 
+<script>
+(function() {
+    var theme = 'dark';
+    try { theme = window.sessionStorage.getItem('theme') || 'dark'; } catch (e) {}
+    document.documentElement.classList.toggle('dark-theme', theme === 'dark');
+})();
+</script>
+
+<style>
+    html { background-color: #fbfbfb; }
+    html.dark-theme { background-color: #292a2d; }
+    html.dark-theme body { background-color: #292a2d; color: #a9a9b3; }
+</style>
+
+
+
     <!-- stylesheets list from _config.yml -->
     
     <link rel="stylesheet" href="/css/style.css">
     
 
-
-<!-- Prevent theme flashing (FOUC) -->
-<script>
-(function() {
-    const defaultTheme = 'dark';
-    const savedTheme = window.sessionStorage.getItem('theme') || defaultTheme;
-    if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark-theme');
-        document.body.classList.add('dark-theme');
-    }
-})();
-</script>
 
 
 
@@ -62,23 +66,13 @@
 
 <body>
     <script>
-        // this function is used to check current theme before page loaded.
+        // Apply the saved theme to <body> before first paint.
+        // Default is 'dark' - must stay consistent with head.ejs and /js/script.js,
+        // otherwise the page renders light first and flashes dark later.
         (() => {
-            const pagebody = document.getElementsByTagName('body')[0]
-
-            function setTheme(status) {
-
-                if (status === 'dark') {
-                    window.sessionStorage.theme = 'dark'
-                    pagebody.classList.add('dark-theme');
-
-                } else if (status === 'light') {
-                    window.sessionStorage.theme = 'light'
-                    pagebody.classList.remove('dark-theme');
-                }
-            };
-
-            setTheme(window.sessionStorage.theme)
+            var theme = 'dark';
+            try { theme = window.sessionStorage.getItem('theme') || 'dark'; } catch (e) {}
+            document.body.classList.toggle('dark-theme', theme === 'dark');
         })();
     </script>
 
@@ -161,65 +155,6 @@
                     
                     <div class="card-item">
                         <div class="categories">
-                            <a href="/categories/CTF/">
-                                <h3>
-                                    <i class="iconfont icon-category" style="padding-right:3px"></i>
-                                    CTF
-                                </h3>
-                            </a>
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/38716dbccafa/">[ISCTF 2025] ez_tea</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/8dd8209564bc/">[HDCTF2019] Maze WP</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/70fe03727d41/">[Newstar2025] Reverse3 花指令</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                                    <article class="archive-item">
-                                        <a class="archive-item-link"
-                                           href="/CTF/168ee05721a0/">[强网杯2025] JustRe</a>
-                                    </article>
-                                
-                            
-                                
-                                
-                            
-                            
-                                <a class="more-post-link" href="/categories/CTF/">More >></a>
-                            
-                        </div>
-                    </div>
-                
-                    
-                    <div class="card-item">
-                        <div class="categories">
                             <a href="/categories/C/">
                                 <h3>
                                     <i class="iconfont icon-category" style="padding-right:3px"></i>
@@ -243,6 +178,65 @@
                                     </article>
                                 
                             
+                            
+                        </div>
+                    </div>
+                
+                    
+                    <div class="card-item">
+                        <div class="categories">
+                            <a href="/categories/CTF/">
+                                <h3>
+                                    <i class="iconfont icon-category" style="padding-right:3px"></i>
+                                    CTF
+                                </h3>
+                            </a>
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/137726d9abb0/">N1CTF Junior 2026 WriteUp (1/2)</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/8dd8209564bc/">[HDCTF2019] Maze WP</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/38716dbccafa/">[ISCTF 2025] ez_tea</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/70fe03727d41/">[Newstar2025] Reverse3 花指令</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                                    <article class="archive-item">
+                                        <a class="archive-item-link"
+                                           href="/CTF/ee7f4c5b040f/">[Newstar2025] Reverse4 Dancing Keys</a>
+                                    </article>
+                                
+                            
+                                
+                                
+                            
+                            
+                                <a class="more-post-link" href="/categories/CTF/">More >></a>
                             
                         </div>
                     </div>
